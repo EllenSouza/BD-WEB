@@ -5,4 +5,8 @@ export class BDWebService {
         const res = await (await fetch(BASE_URL + '/complexo')).json();
         return res.data;
     }
+    async getQtdFavelasPorBairro() {
+        const res = await (await fetch(BASE_URL + '/fav-bairro')).json();
+        return res.data;
+    }
 }

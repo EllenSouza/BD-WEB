@@ -1,6 +1,36 @@
 import Link from 'next/link';
+import { Dropdown } from 'primereact/dropdown';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { useEffect, useState } from 'react';
+import { BDWebService } from '../services/bd-web';
 
 export default function Home() {
+    const [consulta, setConsulta] = useState('');
+    const [data, setData] = useState([]);
+    const service = new BDWebService();
+    const consultaOptions = [
+        { label: 'Quantidade de favelas por Bairro', value: '1' },
+        {
+            label: 'Quantidade de famílias em extrema pobreza por Bairro',
+            value: '2',
+        },
+    ];
+    useEffect(() => {
+        const getData = async () => {
+            const qtdFavPorBairro = await getQtdFavBairro();
+            setData(qtdFavPorBairro);
+        };
+        if (consulta == 1) {
+            getData();
+        }
+    }, [consulta]);
+
+    const getQtdFavBairro = async () => {
+        const resp = await service.getQtdFavelasPorBairro();
+        return resp;
+    };
+
     return (
         <>
             <header className="flex flex-column align-items-center">
@@ -15,9 +45,28 @@ export default function Home() {
                     favelas e atividades econômicas nos bairros da cidade do Rio
                     de Janeiro.
                 </p>
-
+                <Dropdown
+                    value={consulta}
+                    options={consultaOptions}
+                    onChange={(e) => setConsulta(e.value)}
+                    placeholder="Selecione uma consulta"
+                />
+                <DataTable
+                    value={data}
+                    paginator
+                    rows={5}
+                    removableSort
+                    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+                >
+                    <Column field="Nome_Bairro" header="Nome Bairro" sortable />
+                    <Column
+                        field="Qtd_Favelas"
+                        header="Quatidade de favelas"
+                        sortable
+                    />
+                </DataTable>
             </main>
-            <footer className="grid line-height-3 bg-green-900 text-white">
+            <footer className=" mt-5 grid line-height-3 bg-green-900 text-white">
                 <section className="text-xl col-6 px-6 py-3 flex flex-column align-items-center">
                     <p className="text-justify">
                         As informações são resultados de combinações de dados
@@ -106,7 +155,6 @@ export default function Home() {
                             </li>
                         </ul>
                     </section>
-
                 </section>
                 <section className="text-xl col-6 px-6 py-3 flex flex-column align-items-center">
                     <h4 className="">Integrantes</h4>
