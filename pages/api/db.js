@@ -3,10 +3,10 @@ const mysql = require('mysql2/promise');
 export default async function connection(req, res) {
     // create the connection to database
     const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'ellen@2001',
-        database: 'TrabBD',
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
     });
     try {
         const [results] = await connection.query('SELECT * FROM Complexo');
