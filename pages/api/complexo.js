@@ -1,15 +1,11 @@
-// get the client
-const mysql = require('mysql2/promise');
+import { pool } from '../../utils/config';
 export default async function connection(req, res) {
-    // create the connection to database
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
-    });
     try {
+        const connection = await pool.getConnection();
+
         const [results] = await connection.query('SELECT * FROM Complexo');
+
+        pool.releaseConnection(connection);
         res.status(200).json({ data: results });
     } catch (error) {}
 }
