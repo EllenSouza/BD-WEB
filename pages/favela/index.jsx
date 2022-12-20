@@ -1,15 +1,15 @@
 import { Chart } from 'primereact/chart';
-import { BDWebService } from '../../services/bd-web';
 import { useEffect, useState } from 'react';
+import { FavelaService } from '../../services/favela-service';
 
-export default function favela() {
-    const service = new BDWebService();
+export default function Favela() {
+    const service = new FavelaService();
 
     const getQtdFavBairro = async () => {
         const resp = await service.getQtdFavelasPorBairro();
         return resp;
     };
-   
+
     const [labels, setLabels] = useState([]);
     const [results, setResults] = useState([]);
 
@@ -17,13 +17,14 @@ export default function favela() {
         const getData = async () => {
             const label = [];
             const result = [];
-            const qtdFavPorBairro = await getQtdFavBairro();
-            qtdFavPorBairro.map((registro) => {
-                label.push(registro.Nome_Bairro);
-                result.push(registro.Qtd_Favelas);
-            });
-            setLabels(label);
-            setResults(result);
+            // const qtdFavPorBairro = await getQtdFavBairro();
+            // console.log(qtdFavPorBairro);
+            // qtdFavPorBairro.map((registro) => {
+            //     label.push(registro.Nome_Bairro);
+            //     result.push(registro.Qtd_Favelas);
+            // });
+            // setLabels(label);
+            // setResults(result);
         };
         getData();
     }, []);
@@ -39,7 +40,7 @@ export default function favela() {
             },
         ],
     };
-    
+
     const options = {
         plugins: {
             title: {
@@ -54,7 +55,7 @@ export default function favela() {
             },
         },
     };
-    
+
     return (
         <>
             <div className="flex justify-content-center">
@@ -66,7 +67,6 @@ export default function favela() {
                     style={{ width: 1200 }}
                 />
             </div>
-            
         </>
     );
 }
