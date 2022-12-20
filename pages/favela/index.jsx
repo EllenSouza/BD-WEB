@@ -17,14 +17,14 @@ export default function Favela() {
         const getData = async () => {
             const label = [];
             const result = [];
-            // const qtdFavPorBairro = await getQtdFavBairro();
-            // console.log(qtdFavPorBairro);
-            // qtdFavPorBairro.map((registro) => {
-            //     label.push(registro.Nome_Bairro);
-            //     result.push(registro.Qtd_Favelas);
-            // });
-            // setLabels(label);
-            // setResults(result);
+            const qtdFavPorBairro = await getQtdFavBairro();
+            console.log(qtdFavPorBairro);
+            qtdFavPorBairro.map((registro) => {
+                label.push(registro.Nome_Bairro);
+                result.push(registro.Qtd_Favelas);
+            });
+            setLabels(label);
+            setResults(result);
         };
         getData();
     }, []);
