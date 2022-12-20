@@ -5,7 +5,7 @@ export default async function connection(req, res) {
 
         const [results] = await connection.query('SELECT * FROM Complexo');
 
-        pool.releaseConnection(connection);
         res.status(200).json({ data: results });
+        pool.releaseConnection(connection);
     } catch (error) {}
 }

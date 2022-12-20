@@ -15,10 +15,10 @@ export default async function connection(req, res) {
             FROM Bairro NATURAL JOIN Area_de_Planejamento NATURAL JOIN Favela
             GROUP BY Cod_AP;
         `);
-        pool.releaseConnection(connection);
         res.status(200).json({
             Quantidade_de_favelas_por_bairro: fav_bairro,
             Quantidade_de_favelas_por_área_de_planejamento: fav_ap,
         });
+        pool.releaseConnection(connection);
     } catch (error) {}
 }
