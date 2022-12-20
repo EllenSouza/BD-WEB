@@ -6,7 +6,7 @@ import { Menubar } from 'primereact/menubar';
 import { Rubik } from '@next/font/google';
 
 // If loading a variable font, you don't need to specify the font weight
-const rubik = Rubik({ subsets: ['normal'] });
+const rubik = Rubik({ subsets: ['italic'] });
 
 export default function Layout({ children }) {
     const router = useRouter();
