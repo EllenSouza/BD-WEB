@@ -9,6 +9,7 @@ export default function favela() {
         const resp = await service.getQtdFavelasPorBairro();
         return resp;
     };
+   
     const [labels, setLabels] = useState([]);
     const [results, setResults] = useState([]);
 
@@ -25,8 +26,6 @@ export default function favela() {
             setResults(result);
         };
         getData();
-        console.log(labels);
-        console.log(results);
     }, []);
 
     const data = {
@@ -40,6 +39,7 @@ export default function favela() {
             },
         ],
     };
+    
     const options = {
         plugins: {
             title: {
@@ -54,16 +54,19 @@ export default function favela() {
             },
         },
     };
+    
     return (
         <>
-            <div className='flex justify-content-center'>
+            <div className="flex justify-content-center">
                 <Chart
+                    id="FavPorBairro"
                     type="bar"
                     data={data}
                     options={options}
                     style={{ width: 1200 }}
                 />
             </div>
+            
         </>
     );
 }
