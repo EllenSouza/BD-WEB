@@ -15,6 +15,14 @@ export default async function connection(req, res) {
         GROUP BY Cod_Bairro
         ORDER BY Qtd_Favelas DESC
         `);
-        res.status(200).json({ data: results });
+        const [results2] =
+            await connection.query(`SELECT Nome_AP, COUNT(cod_fav) as Qtd_Favelas
+            FROM Bairro NATURAL JOIN Area_de_Planejamento NATURAL JOIN Favela
+            GROUP BY Cod_AP;
+        `);
+        res.status(200).json({
+            Quantidade_de_favelas_por_bairro: results,
+            Quantidade_de_favelas_por_área_de_planejamento: results2,
+        });
     } catch (error) {}
 }
