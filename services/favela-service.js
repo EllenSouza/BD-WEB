@@ -13,4 +13,8 @@ export class FavelaService {
         const res = await (await fetch(BASE_URL + '/favela')).json();
         return res.Bairros_com_mais_extrema_pobreza;
     }
+    async getFaixaRendaPorAP(){
+        const res = await (await fetch(BASE_URL + '/favela')).json();
+        return res.Faixa_renda_por_AP;
+    }
 }
