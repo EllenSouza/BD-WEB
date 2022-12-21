@@ -12,4 +12,12 @@ export class BairroService {
         ).json();
         return res.data;
     }
+
+    // Métodos para os gráficos
+    async getDadosBairro(cod_bairro) {
+        const res = await (
+            await fetch(BASE_URL + `/bairro/${cod_bairro}`)
+        ).json();
+        return res.data;
+    }
 }

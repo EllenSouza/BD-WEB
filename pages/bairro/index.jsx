@@ -1,21 +1,19 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 import { Panel } from 'primereact/panel';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
-
 import { BairroService } from '../../services/bairro-service';
 
-export default function Bairro({ bairros }) {
-    const service = new BairroService();
+export default function PesquisaBairro({ bairros }) {
+    const router = useRouter();
     const [selectedBairro, setSelectedBairro] = useState('');
     const handleSearch = async (e) => {
         e.preventDefault();
-        try {
-            const bairro = await service.getBairro(selectedBairro.Cod_Bairro);
-            console.log(bairro);
-        } catch (error) {}
-        return;
+        if (selectedBairro == '') return;
+
+        router.push(`/bairro/${selectedBairro.Cod_Bairro}`);
     };
 
     return (
@@ -30,6 +28,7 @@ export default function Bairro({ bairros }) {
                             value={selectedBairro}
                             options={bairros}
                             filter
+                            required
                             filterBy="Nome_Bairro"
                             optionLabel="Nome_Bairro"
                             placeholder="Selecione um bairro"
@@ -41,11 +40,10 @@ export default function Bairro({ bairros }) {
                         <Button
                             className="p-button-outlined"
                             style={{ borderRadius: '0 3px 3px 0' }}
-                            label="Bucar"
+                            label="Buscar"
                             iconPos="right"
                             icon="pi pi-search"
                             type="submit"
-                            // loading={isTreeLoading}
                         />
                     </div>
                 </form>
@@ -58,10 +56,9 @@ export async function getServerSideProps(context) {
         // Fetch data from external API
         const bairroService = new BairroService();
         const bairros = await bairroService.getBairros();
-        console.log(bairros);
         return { props: { bairros } };
         // Pass data to the page via props
     } catch (error) {
-        return { props: [] };
+        return { props: {} };
     }
 }
