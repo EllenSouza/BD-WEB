@@ -2,58 +2,88 @@ import { Chart } from 'primereact/chart';
 import { useEffect, useState } from 'react';
 import { FavelaService } from '../../services/favela-service';
 
-export default function Favela() {
+export default function Favela({ loading }) {
     const service = new FavelaService();
+    const [favPorBairro, setFavPorBairro] = useState({
+        labels: [],
+        results: [],
+    });
+    const [favPorAP, setFavPorAP] = useState({
+        labels: [],
+        results: [],
+    });
 
     const getQtdFavBairro = async () => {
         const resp = await service.getQtdFavelasPorBairro();
         return resp;
     };
-
-    const [labels, setLabels] = useState([]);
-    const [results, setResults] = useState([]);
+    const getQtdFavAP = async () => {
+        const resp = await service.getQtdFavelasPorAP();
+        return resp;
+    };
 
     useEffect(() => {
         const getData = async () => {
-            const label = [];
-            const result = [];
-            const qtdFavPorBairro = await getQtdFavBairro();
-            console.log(qtdFavPorBairro);
-            qtdFavPorBairro.map((registro) => {
-                label.push(registro.Nome_Bairro);
-                result.push(registro.Qtd_Favelas);
-            });
-            setLabels(label);
-            setResults(result);
+            try {
+                loading(true);
+                const favPorBairro = {
+                    labels: [],
+                    results: [],
+                };
+                const favPorAP = {
+                    labels: [],
+                    results: [],
+                };
+                const [qtdFavPorBairro, qtdFavPorAP] = await Promise.all([
+                    getQtdFavBairro(),
+                    getQtdFavAP(),
+                ]);
+                qtdFavPorBairro.map((registro) => {
+                    favPorBairro.labels.push(registro.Nome_Bairro);
+                    favPorBairro.results.push(registro.Qtd_Favelas);
+                });
+                setFavPorBairro(favPorBairro);
+                qtdFavPorAP.map((registro) => {
+                    favPorAP.labels.push(registro.Nome_AP);
+                    favPorAP.results.push(registro.Qtd_Favelas);
+                });
+                setFavPorAP(favPorAP);
+            } catch (error) {
+            } finally {
+                loading(false);
+            }
         };
         getData();
     }, []);
 
-    const data = {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Quantidade de favelas',
-                data: results,
-                fill: false,
-                backgroundColor: '#4cd07c',
-            },
-        ],
+    const newData = (labels, textLabel, results, color) => {
+        return {
+            labels: labels,
+            datasets: [
+                {
+                    label: textLabel,
+                    data: results,
+                    fill: false,
+                    backgroundColor: color,
+                },
+            ],
+        };
     };
-
-    const options = {
-        plugins: {
-            title: {
-                display: true,
-                text: 'Quantidade de favelas por Bairro (RJ)',
-                font: {
-                    size: 16,
+    const options = (text) => {
+        return {
+            plugins: {
+                title: {
+                    display: true,
+                    text: text,
+                    font: {
+                        size: 16,
+                    },
+                },
+                legend: {
+                    position: 'bottom',
                 },
             },
-            legend: {
-                position: 'bottom',
-            },
-        },
+        };
     };
 
     return (
@@ -62,9 +92,37 @@ export default function Favela() {
                 <Chart
                     id="FavPorBairro"
                     type="bar"
-                    data={data}
-                    options={options}
+                    data={newData(
+                        favPorBairro.labels,
+                        'Quantidade de favelas',
+                        favPorBairro.results,
+                        '#4cd07c'
+                    )}
+                    options={options('Quantidade de favelas por Bairro (RJ)')}
                     style={{ width: 1200 }}
+                />
+            </div>
+            <div className="flex justify-content-center mt-7">
+                <Chart
+                    id="FavPorAP"
+                    type="doughnut"
+                    data={newData(
+                        favPorAP.labels,
+                        'Quantidade de favelas',
+                        favPorAP.results,
+                        [
+                            "#FF6384",
+                            "#36A2EB",
+                            "#FFCE56",
+                            "#4cd07c",
+                            "#9400d3",
+                        ]
+                        
+                    )}
+                    options={options(
+                        'Quantidade de favelas por área de planejamento (RJ)'
+                    )}
+                    style={{ position: 'relative', width: '40%' }}
                 />
             </div>
         </>
