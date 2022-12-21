@@ -1,10 +1,8 @@
-import { pool } from '../../utils/config';
+import { executeQuery } from '../../lib/db';
 export default async function complexos(req, res) {
     try {
-        const connection = await pool.getConnection();
-        const [results] = await connection.query('SELECT * FROM Complexo');
+        const bairros = await executeQuery(`SELECT * FROM Complexo`);
 
-        res.status(200).json({ data: results });
-        pool.releaseConnection(connection);
+        res.status(200).json({ data: bairros });
     } catch (error) {}
 }
