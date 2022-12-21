@@ -38,6 +38,7 @@ export default function Layout({ children }) {
         <div className={rubik.className}>
             <Head>
                 <title>Favelas RJ</title>
+                <link rel="icon" href="/database.png"/>
             </Head>
             <Menubar model={items} start={start} />
             <main>{children}</main>
