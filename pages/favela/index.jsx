@@ -1,10 +1,13 @@
 import { Chart } from 'primereact/chart';
 import { useEffect, useState } from 'react';
-import { FavelaService } from '../../services/favela-service';
 import { Divider } from 'primereact/divider';
+import { BarSkeleton } from '../../components/skeletons/bar_skeleton';
+import { PieSkeleton } from '../../components/skeletons/pie_skeleton';
+import { FavelaService } from '../../services/favela-service';
 
 export default function Favela({ loading }) {
     const service = new FavelaService();
+    const [loadingPage, setLoadingPage] = useState(false);
     const [favPorBairro, setFavPorBairro] = useState({
         labels: [],
         results: [],
@@ -35,6 +38,7 @@ export default function Favela({ loading }) {
         const getData = async () => {
             try {
                 loading(true);
+                setLoadingPage(true);
                 const favPorBairro = {
                     labels: [],
                     results: [],
@@ -71,6 +75,7 @@ export default function Favela({ loading }) {
             } catch (error) {
             } finally {
                 loading(false);
+                setLoadingPage(false);
             }
         };
         getData();
@@ -120,76 +125,102 @@ export default function Favela({ loading }) {
             },
             legend: {
                 position: 'bottom',
-                color: '#000000'
+                color: '#000000',
             },
         },
     };
 
+    const renderCharts = () => {
+        return (
+            <>
+                <div className="flex justify-content-center">
+                    <Chart
+                        id="FavPorBairro"
+                        type="bar"
+                        data={newData(
+                            favPorBairro.labels,
+                            'Quantidade de favelas',
+                            favPorBairro.results,
+                            '#4cd07c'
+                        )}
+                        options={options(
+                            'Quantidade de favelas por Bairro (RJ)'
+                        )}
+                        style={{ width: 1200 }}
+                    />
+                </div>
+                <Divider />
+                <div className="flex justify-content-center mt-7 mb-7">
+                    <Chart
+                        id="FavPorAP"
+                        type="doughnut"
+                        data={newData(
+                            favPorAP.labels,
+                            'Quantidade de favelas',
+                            favPorAP.results,
+                            [
+                                '#FF6384',
+                                '#36A2EB',
+                                '#FFCE56',
+                                '#4cd07c',
+                                '#9400d3',
+                            ]
+                        )}
+                        options={options(
+                            'Quantidade de favelas por área de planejamento (RJ)'
+                        )}
+                        style={{ position: 'relative', width: '40%' }}
+                    />
+                </div>
+                <Divider />
+                <div className="flex justify-content-center mt-7 mb-7">
+                    <Chart
+                        id="BairrosMaiorExtremaPobreza"
+                        type="bar"
+                        data={newData(
+                            bairrosEP.labels,
+                            'Quantidade de famílias em Extrema Pobreza',
+                            bairrosEP.results,
+                            [
+                                `var(--red-900)`,
+                                `var(--red-900)`,
+                                `var(--red-900)`,
+                                `var(--red-900)`,
+                                `var(--red-900)`,
+                                `var(--red-900)`,
+                                `var(--red-900)`,
+                                `var(--red-800)`,
+                                `var(--red-700)`,
+                                `var(--red-600)`,
+                                `var(--red-500)`,
+                                `var(--red-400)`,
+                                `var(--red-300)`,
+                                `var(--red-200)`,
+                                `var(--red-100)`,
+                            ]
+                        )}
+                        options={horizontalOptions}
+                        style={{ width: 1200 }}
+                    />
+                </div>
+                <Divider />
+            </>
+        );
+    };
+
     return (
         <>
-            <div className="flex justify-content-center">
-                <Chart
-                    id="FavPorBairro"
-                    type="bar"
-                    data={newData(
-                        favPorBairro.labels,
-                        'Quantidade de favelas',
-                        favPorBairro.results,
-                        '#4cd07c'
-                    )}
-                    options={options('Quantidade de favelas por Bairro (RJ)')}
-                    style={{ width: 1200 }}
-                />
-            </div>
-            <Divider />
-            <div className="flex justify-content-center mt-7 mb-7">
-                <Chart
-                    id="FavPorAP"
-                    type="doughnut"
-                    data={newData(
-                        favPorAP.labels,
-                        'Quantidade de favelas',
-                        favPorAP.results,
-                        ['#FF6384', '#36A2EB', '#FFCE56', '#4cd07c', '#9400d3']
-                    )}
-                    options={options(
-                        'Quantidade de favelas por área de planejamento (RJ)'
-                    )}
-                    style={{ position: 'relative', width: '40%' }}
-                />
-            </div>
-            <Divider />
-            <div className="flex justify-content-center mt-7 mb-7">
-                <Chart
-                    id="BairrosMaiorExtremaPobreza"
-                    type="bar"
-                    data={newData(
-                        bairrosEP.labels,
-                        'Quantidade de famílias em Extrema Pobreza',
-                        bairrosEP.results,
-                        [
-                            `var(--red-900)`,
-                            `var(--red-900)`,
-                            `var(--red-900)`,
-                            `var(--red-900)`,
-                            `var(--red-900)`,
-                            `var(--red-900)`,
-                            `var(--red-900)`,
-                            `var(--red-800)`,
-                            `var(--red-700)`,
-                            `var(--red-600)`,
-                            `var(--red-500)`,
-                            `var(--red-400)`,
-                            `var(--red-300)`,
-                            `var(--red-200)`,
-                            `var(--red-100)`,
-                        ]
-                    )}
-                    options={horizontalOptions}
-                    style={{ width: 1200 }}
-                />
-            </div>
-            <Divider />
+            {loadingPage ? (
+                <>
+                    <BarSkeleton />
+                    <Divider />
+                    <PieSkeleton />
+                    <Divider />
+                    <BarSkeleton />
+                </>
+            ) : (
+                renderCharts()
+            )}
         </>
     );
 }
