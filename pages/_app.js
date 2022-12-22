@@ -12,15 +12,7 @@ import { BlockUI } from 'primereact/blockui';
 export default function App({ Component, pageProps }) {
     const [loading, setLoading] = useState();
     return (
-        <BlockUI
-            blocked={loading}
-            template={
-                <i
-                    className="pi pi-spin pi-spinner"
-                    style={{ fontSize: '3rem' }}
-                />
-            }
-        >
+        <BlockUI blocked={loading}>
             <Layout>
                 <Component {...pageProps} loading={setLoading} />
             </Layout>

@@ -1,14 +1,15 @@
-import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Menubar } from 'primereact/menubar';
-
 import { Rubik } from '@next/font/google';
+import { useEffect, useState } from 'react';
+import { Button } from 'primereact/button';
+import { Menubar } from 'primereact/menubar';
+import { SearchSkeleton } from './skeletons/search_skeleton';
 
-// If loading a variable font, you don't need to specify the font weight
-const rubik = Rubik({ subsets: ['italic'] });
+const rubik = Rubik({ subsets: ['normal'] });
 
 export default function Layout({ children }) {
+    const [loadingSkeleton, setLoadingSkeleton] = useState(false);
     const router = useRouter();
     const items = [
         {
@@ -17,44 +18,42 @@ export default function Layout({ children }) {
         },
         {
             label: 'Bairro',
-            command: () => router.push('/bairro'),
+            command: () => startSkeleton('/bairro'),
         },
         {
             label: 'Favela',
-            command: () => router.push('/favela'),
+            command: () => startSkeleton('/favela'),
         },
     ];
 
-    const start = (
-        <Link href="/">
-            <i
-                className="pi pi-database"
-                style={{ fontSize: '2em', color: `var(--surface-900)` }}
-            />
-        </Link>
+    const end = (
+        <Button label="Envolvidos" className="p-button-outlined p-button-sm" />
     );
 
+    useEffect(() => {
+        setLoadingSkeleton(false);
+    }, [router.asPath]);
+
+    const startSkeleton = (url) => {
+        if (router.asPath != url) setLoadingSkeleton(true);
+        else setLoadingSkeleton(false);
+
+        router.push(url);
+    };
     return (
         <div className={rubik.className}>
             <Head>
                 <title>Favelas RJ</title>
-                <link rel="icon" href="/database.png"/>
+                <link rel="icon" href="/database.png" />
             </Head>
-            <Menubar model={items} start={start} />
-            <main>{children}</main>
-            {/* <footer className="flex">
-                
-                <section className="text-xl col-6 px-6 py-3 flex flex-column align-items-center">
-                    <h4 className="">Integrantes</h4>
-                    <ul>
-                        <li>Ellen Almeida</li>
-                        <li>Gabriel Trindade</li>
-                        <li>Jefferson Maxwell</li>
-                        <li>Kevin Sena</li>
-                        <li>Riquelme Gomes</li>
-                    </ul>
-                </section>
-            </footer> */}
+            <Menubar model={items} end={end} />
+            {loadingSkeleton ? (
+                <>
+                    <SearchSkeleton />
+                </>
+            ) : (
+                <main>{children}</main>
+            )}
         </div>
     );
 }

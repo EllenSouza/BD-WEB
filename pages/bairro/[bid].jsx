@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Chart } from 'primereact/chart';
+import { Divider } from 'primereact/divider';
 import { BairroService } from '../../services/bairro-service';
+import { BarSkeleton } from '../../components/skeletons/bar_skeleton';
+import { PieSkeleton } from '../../components/skeletons/pie_skeleton';
 
 export default function Bairro({ loading, query }) {
     const service = new BairroService();
     const [charts, setCharts] = useState([]);
+    const [loadingPage, setLoadingPage] = useState(false);
 
     const TYPE_CHARTS = ['bar', 'pie'];
     const TITLE_CHARTS = [
@@ -16,6 +20,7 @@ export default function Bairro({ loading, query }) {
         const initScreen = async () => {
             try {
                 loading(true);
+                setLoadingPage(true);
                 const _charts = [];
                 const [ativEcoPorBairro, faixaRendaPorBairro] =
                     await service.getDadosBairro(query.bid);
@@ -41,6 +46,7 @@ export default function Bairro({ loading, query }) {
             } catch (error) {
             } finally {
                 loading(false);
+                setLoadingPage(false);
             }
         };
         initScreen();
@@ -96,27 +102,36 @@ export default function Bairro({ loading, query }) {
         };
     };
 
+    const renderCharts = () => {
+        return charts.map((chart, index) => (
+            <>
+                <Chart
+                    key={index}
+                    type={TYPE_CHARTS[index]}
+                    data={newChartData(chart.labels, chart.data)}
+                    width="35rem"
+                    height="35rem"
+                    options={newChartOptions(TITLE_CHARTS[index])}
+                />
+                <Divider />
+            </>
+        ));
+    };
+
     return (
-        <div style={{ height: '100%' }}>
-            {charts.map((chart, index) =>
-                index == 1 ? (
-                    <Chart
-                        key={index}
-                        style={{ width: '45rem', height: '45rem' }}
-                        type={TYPE_CHARTS[index]}
-                        data={newChartData(chart.labels, chart.data)}
-                        options={newChartOptions(TITLE_CHARTS[index])}
-                    />
-                ) : (
-                    <Chart
-                        key={index}
-                        type={TYPE_CHARTS[index]}
-                        data={newChartData(chart.labels, chart.data)}
-                        options={newChartOptions(TITLE_CHARTS[index])}
-                    />
-                )
+        <>
+            {loadingPage ? (
+                <div className="flex flex-column gap-5">
+                    <BarSkeleton />
+                    <Divider />
+                    <PieSkeleton />
+                </div>
+            ) : (
+                <div className="flex flex-column align-items-center p-3">
+                    {renderCharts()}
+                </div>
             )}
-        </div>
+        </>
     );
 }
 export async function getServerSideProps({ query }) {
