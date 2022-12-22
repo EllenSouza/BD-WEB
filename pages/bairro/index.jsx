@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-
 import { Panel } from 'primereact/panel';
 import { Button } from 'primereact/button';
+import { Ripple } from 'primereact/ripple';
 import { Dropdown } from 'primereact/dropdown';
 import { BairroService } from '../../services/bairro-service';
 
@@ -16,9 +16,34 @@ export default function PesquisaBairro({ bairros }) {
         router.push(`/bairro/${selectedBairro.Cod_Bairro}`);
     };
 
+    const template = (options, textTittle) => {
+        const toggleIcon = options.collapsed
+            ? 'pi pi-chevron-down'
+            : 'pi pi-chevron-up';
+        const className = `${options.className} justify-content-start`;
+        const titleClassName = `${options.titleClassName} pl-1`;
+
+        return (
+            <div className={className}>
+                <button
+                    className={options.togglerClassName}
+                    onClick={options.onTogglerClick}
+                >
+                    <span className={toggleIcon}></span>
+                    <Ripple />
+                </button>
+                <span className={titleClassName}>{textTittle}</span>
+            </div>
+        );
+    };
+
     return (
         <>
-            <Panel className="p-3" header="Selecione um bairro">
+            <Panel
+                headerTemplate={(opt) => template(opt, 'Selecione um bairro')}
+                toggleable
+                className="p-3"
+            >
                 <form className="flex fluid" onSubmit={handleSearch}>
                     <div className="field p-inputgroup">
                         <span className="p-inputgroup-addon">
