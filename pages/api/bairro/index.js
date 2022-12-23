@@ -1,3 +1,7 @@
+/**
+ * Endpoint que traz todos os bairros
+ */
+
 import { executeQuery } from '../../../lib/db';
 export default async function bairros(req, res) {
     try {
