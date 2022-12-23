@@ -1,48 +1,57 @@
+// React & Next
 import { useEffect, useState } from 'react';
+// Primereact
 import { Chart } from 'primereact/chart';
 import { Divider } from 'primereact/divider';
+// Services
 import { BairroService } from '../../services/bairro-service';
+// Components
 import { BarSkeleton } from '../../components/skeletons/bar_skeleton';
 import { PieSkeleton } from '../../components/skeletons/pie_skeleton';
+// Utils
+import { separateData } from '../../utils/utils';
+
+const initChart = {
+    labels: [],
+    data: [],
+    title: '',
+};
 
 export default function Bairro({ loading, query }) {
     const service = new BairroService();
-    const [charts, setCharts] = useState([]);
+    const [chartFaixaRenda, setChartFaixaRenda] = useState(initChart);
+    const [chartAtivEco, setChartAtivEco] = useState(initChart);
     const [loadingPage, setLoadingPage] = useState(false);
-
-    const TYPE_CHARTS = ['bar', 'pie'];
-    const TITLE_CHARTS = [
-        'Atividades econômicas por bairro',
-        'Faixa de renda por bairro',
-    ];
 
     useEffect(() => {
         const initScreen = async () => {
             try {
                 loading(true);
                 setLoadingPage(true);
-                const _charts = [];
-                const [ativEcoPorBairro, faixaRendaPorBairro] =
-                    await service.getDadosBairro(query.bid);
-                let labels = getField(ativEcoPorBairro, 'Nome_Ativ');
-                let data = getField(ativEcoPorBairro, 'Quantidade_Empregos');
-                _charts.push({ labels, data });
+                const [[bairro], ativEcoPorBairro, [faixaRendaPorBairro]] =
+                    await Promise.all([
+                        getBairro(),
+                        getAtivEcoBairro(),
+                        getFaixaRendaBairro(),
+                    ]);
+                let [labels, data] = separateData(
+                    ativEcoPorBairro,
+                    'Nome_Ativ',
+                    'Quantidade_Empregos'
+                );
+                setChartAtivEco({
+                    labels,
+                    data,
+                    title: `15 Atividades econômicas mais presentes em ${bairro.Nome_Bairro}`,
+                });
 
-                labels = [
-                    'Acima_Meio_SM',
-                    'Baixa_Renda',
-                    'Extrema_Pobreza',
-                    'Pobreza',
-                ];
-                const faixa = faixaRendaPorBairro.shift();
-                data = [
-                    faixa.Acima_Meio_SM,
-                    faixa.Baixa_Renda,
-                    faixa.Extrema_Pobreza,
-                    faixa.Pobreza,
-                ];
-                _charts.push({ labels, data });
-                setCharts(_charts);
+                labels = Object.keys(faixaRendaPorBairro);
+                data = Object.values(faixaRendaPorBairro);
+                setChartFaixaRenda({
+                    labels,
+                    data,
+                    title: `Quantidade de famílias em cada faixa de renda em ${bairro.Nome_Bairro}`,
+                });
             } catch (error) {
             } finally {
                 loading(false);
@@ -52,11 +61,15 @@ export default function Bairro({ loading, query }) {
         initScreen();
     }, []);
 
-    const getField = (data, field) => {
-        const array = data.map((reg) => {
-            return reg[field];
-        });
-        return array;
+    const getBairro = async () => {
+        return await service.getBairro(query.bid);
+    };
+    const getFaixaRendaBairro = async () => {
+        return await service.getFaixaRendaBairro(query.bid);
+    };
+
+    const getAtivEcoBairro = async () => {
+        return await service.getAtivEcoBairro(query.bid);
     };
 
     const newChartData = (labels, data, title = '') => {
@@ -102,22 +115,6 @@ export default function Bairro({ loading, query }) {
         };
     };
 
-    const renderCharts = () => {
-        return charts.map((chart, index) => (
-            <>
-                <Chart
-                    key={index}
-                    type={TYPE_CHARTS[index]}
-                    data={newChartData(chart.labels, chart.data)}
-                    width="35rem"
-                    height="35rem"
-                    options={newChartOptions(TITLE_CHARTS[index])}
-                />
-                <Divider />
-            </>
-        ));
-    };
-
     return (
         <>
             {loadingPage ? (
@@ -128,7 +125,27 @@ export default function Bairro({ loading, query }) {
                 </div>
             ) : (
                 <div className="flex flex-column align-items-center p-3">
-                    {renderCharts()}
+                    <Chart
+                        type="bar"
+                        data={newChartData(
+                            chartAtivEco.labels,
+                            chartAtivEco.data
+                        )}
+                        width="80rem"
+                        height="40rem"
+                        options={newChartOptions(chartAtivEco.title)}
+                    />
+                    <Divider />
+                    <Chart
+                        type="pie"
+                        data={newChartData(
+                            chartFaixaRenda.labels,
+                            chartFaixaRenda.data
+                        )}
+                        width="35rem"
+                        height="35rem"
+                        options={newChartOptions(chartFaixaRenda.title)}
+                    />
                 </div>
             )}
         </>
