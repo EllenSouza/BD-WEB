@@ -40,6 +40,5 @@ export default async function bairro(req, res) {
             acima_meio_sm: maiorAcimaMeioSM,
         };
         res.status(200).json({ data: dataReturn });
-        // res.status(200).json({ data: maiorAcimaMeioSM });
     } catch (error) {}
 }
