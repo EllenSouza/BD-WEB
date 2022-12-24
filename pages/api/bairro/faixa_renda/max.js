@@ -3,7 +3,7 @@
  * de renda
  */
 
-import { executeQuery } from '../../../../../lib/db';
+import { executeQuery } from '../../../../lib/db';
 export default async function bairro(req, res) {
     try {
         const [maiorExtremaPobreza] = await executeQuery(`

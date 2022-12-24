@@ -3,7 +3,7 @@
  * por área de planejamento
  */
 
-import { executeQuery } from '../../../../../lib/db';
+import { executeQuery } from '../../../../lib/db';
 export default async function bairro(req, res) {
     try {
         const faixa_area_planejamento = await executeQuery(`
