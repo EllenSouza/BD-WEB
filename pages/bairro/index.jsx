@@ -1,21 +1,34 @@
-import { useEffect, useState } from 'react';
+// React & Next
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+// Primreact
 import { Chip } from 'primereact/chip';
 import { Panel } from 'primereact/panel';
+import { Chart } from 'primereact/chart';
 import { Button } from 'primereact/button';
 import { Ripple } from 'primereact/ripple';
 import { Divider } from 'primereact/divider';
 import { Dropdown } from 'primereact/dropdown';
 import { TabView, TabPanel } from 'primereact/tabview';
+// Services
 import { BairroService } from '../../services/bairro-service';
-
+// Components
 import { TabViewSkeleton } from '../../components/skeletons/tabview_skeleton';
+// Utils
+import C from '../../utils/constants';
+import {
+    separateData,
+    newDataset,
+    newChartData,
+    newChartOptions,
+} from '../../utils/utils';
 
 export default function PesquisaBairro({ loading, bairros }) {
     const router = useRouter();
     const service = new BairroService();
     const [activeTab, setActiveTab] = useState(0);
     const [loadingPage, setLoadingPage] = useState(false);
+    const [chartFaixaRendaAP, setChartFaixaRendaAP] = useState(C.INITCHAT);
     const [maxFaixaRenda, setMaxFaixaRenda] = useState({
         acima_meio_sm: { Nome_Bairro: '', Acima_Meio_SM: -1 },
         baixa_renda: { Nome_Bairro: '', Baixa_Renda: -1 },
@@ -29,9 +42,14 @@ export default function PesquisaBairro({ loading, bairros }) {
             try {
                 loading(true);
                 setLoadingPage(true);
-                const [maxFaixaRenda] = await Promise.all([getMaxFaixaRenda()]);
-                console.log(maxFaixaRenda);
+                const [maxFaixaRenda, faixaRendaPorAP] = await Promise.all([
+                    getMaxFaixaRenda(),
+                    getFaixaRendaPorAP(),
+                ]);
                 setMaxFaixaRenda(maxFaixaRenda);
+                const chartFaixaRendaAP =
+                    createChartFaixaRendaAP(faixaRendaPorAP);
+                setChartFaixaRendaAP(chartFaixaRendaAP);
             } catch (error) {
             } finally {
                 loading(false);
@@ -43,6 +61,47 @@ export default function PesquisaBairro({ loading, bairros }) {
 
     const getMaxFaixaRenda = async () => {
         return await service.getMaxFaixaRenda();
+    };
+
+    const getFaixaRendaPorAP = async () => {
+        return await service.getFaixaRendaPorAP();
+    };
+
+    const createChartFaixaRendaAP = (faixaRendaPorAP) => {
+        const [labels, pobreza, extremaPobreza, baixaRenda, acimaMeioSM] =
+            separateData(faixaRendaPorAP, [
+                'Nome_AP',
+                'Pobreza',
+                'Extrema_Pobreza',
+                'Baixa_Renda',
+                'Acima_Meio_SM',
+            ]);
+
+        const labelsDataset = [
+            'Extrema Pobreza',
+            'Pobreza',
+            'Baixa Renda',
+            'Acima Meio SM',
+        ];
+
+        const colorDataset = [
+            '#2057D4',
+            '#7E57C2',
+            '#FFCA28',
+            '#EC407A',
+            '#26A69A',
+        ];
+
+        const datasets = [extremaPobreza, pobreza, baixaRenda, acimaMeioSM].map(
+            (faixa, index) => {
+                return newDataset(
+                    labelsDataset[index],
+                    faixa,
+                    colorDataset[index]
+                );
+            }
+        );
+        return newChartData(labels, datasets);
     };
 
     const handleSearch = async (e) => {
@@ -116,7 +175,7 @@ export default function PesquisaBairro({ loading, bairros }) {
 
                 {loadingPage ? (
                     <div className="flex flex-column gap-5">
-                        <TabViewSkeleton/>
+                        <TabViewSkeleton />
                     </div>
                 ) : (
                     <TabView
@@ -126,10 +185,10 @@ export default function PesquisaBairro({ loading, bairros }) {
                         <TabPanel header="Faixa de Renda">
                             <div className="flex flex-column align-items-center">
                                 <header>
-                                    <h1 className="primary">
-                                        Bairro com maiores índices de cada faixa
-                                        de renda
-                                    </h1>
+                                    <h2 className="primary">
+                                        Bairros com maiores índices de cada
+                                        faixa de renda
+                                    </h2>
                                 </header>
                                 <main className="flex m-3 gap-8 flex-wrapper">
                                     <section className="flex flex-column align-items-center">
@@ -165,6 +224,14 @@ export default function PesquisaBairro({ loading, bairros }) {
                                     </section>
                                 </main>
                             </div>
+                            <Divider />
+                            <Chart
+                                type="bar"
+                                data={chartFaixaRendaAP}
+                                options={newChartOptions(
+                                    'Quantidade de famílias em cada faixa de renda por área de planejamento'
+                                )}
+                            />
                         </TabPanel>
                         <TabPanel header="Atividades Econômicas">
                             Content II

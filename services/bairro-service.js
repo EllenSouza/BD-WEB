@@ -17,6 +17,13 @@ export class BairroService {
         return res.data;
     }
 
+    async getFaixaRendaPorAP() {
+        const res = await (
+            await fetch(`${BASE_URL}/bairro/faixa_renda/area_planejamento`)
+        ).json();
+        return res.data;
+    }
+
     //------------------------->>
     // Métodos de 1 bairro
     //------------------------->>

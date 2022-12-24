@@ -35,30 +35,22 @@ export function newChartData(labels, datasets) {
  * @param {string} label
  * @param {Array} data
  * @param {Array<string>} backgroundColor
- * @param {Array<string>} hoverBackgroundColor
  * @returns Dataset
  */
-export function newDataset(
-    label,
-    data,
-    backgroundColor = [],
-    hoverBackgroundColor = []
-) {
+export function newDataset(label, data, backgroundColor = []) {
     return {
         label: label,
         data: data,
-        // backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#FFCE56'],
         backgroundColor: backgroundColor,
-        hoverBackgroundColor: hoverBackgroundColor,
-        // hoverBackgroundColor: ['#64B5F6', '#81C784', '#FFB74D', '#FFCE56'],
         fill: false,
-        borderColor: '#42A5F5',
     };
 }
 
-const newChartOptions = (title) => {
+export function newChartOptions(title) {
     return {
         plugins: {
+            maintainAspectRatio: false,
+            aspecRatio: 0.8,
             title: {
                 display: true,
                 text: title,
@@ -71,4 +63,4 @@ const newChartOptions = (title) => {
             },
         },
     };
-};
+}
