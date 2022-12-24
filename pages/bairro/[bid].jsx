@@ -9,14 +9,20 @@ import { BairroService } from '../../services/bairro-service';
 import { BarSkeleton } from '../../components/skeletons/bar_skeleton';
 import { PieSkeleton } from '../../components/skeletons/pie_skeleton';
 // Utils
-import { separateData } from '../../utils/utils';
+import {
+    newDataset,
+    newChartData,
+    separateData,
+    newChartOptions,
+} from '../../utils/utils';
 import C from '../../utils/constants';
 
 export default function Bairro({ loading, query }) {
     const service = new BairroService();
-    const [chartFaixaRenda, setChartFaixaRenda] = useState(C.INITCHAT);
-    const [chartAtivEco, setChartAtivEco] = useState(C.INITCHAT);
     const [loadingPage, setLoadingPage] = useState(false);
+    const [chartAtivEco, setChartAtivEco] = useState(C.INITCHAT);
+    const [chartFaixaRenda, setChartFaixaRenda] = useState(C.INITCHAT);
+    const [bairro, setBairro] = useState({ Nome_Bairro: '', Cod_Bairro: -1 });
 
     useEffect(() => {
         const initScreen = async () => {
@@ -29,23 +35,16 @@ export default function Bairro({ loading, query }) {
                         getAtivEcoBairro(),
                         getFaixaRendaBairro(),
                     ]);
-                let [labels, data] = separateData(ativEcoPorBairro, [
-                    'Nome_Ativ',
-                    'Quantidade_Empregos',
-                ]);
-                setChartAtivEco({
-                    labels,
-                    data,
-                    title: `15 Atividades econômicas mais presentes em ${bairro.Nome_Bairro}`,
-                });
+                setBairro(bairro);
 
-                labels = Object.keys(faixaRendaPorBairro);
-                data = Object.values(faixaRendaPorBairro);
-                setChartFaixaRenda({
-                    labels,
-                    data,
-                    title: `Quantidade de famílias em cada faixa de renda em ${bairro.Nome_Bairro}`,
-                });
+                const chartAtivEco = createChartAtivEco(ativEcoPorBairro);
+                setChartAtivEco(chartAtivEco);
+
+                const chartFaixaRenda = createChartFaixaRenda(
+                    faixaRendaPorBairro,
+                    bairro
+                );
+                setChartFaixaRenda(chartFaixaRenda);
             } catch (error) {
             } finally {
                 loading(false);
@@ -58,6 +57,7 @@ export default function Bairro({ loading, query }) {
     const getBairro = async () => {
         return await service.getBairro(query.bid);
     };
+
     const getFaixaRendaBairro = async () => {
         return await service.getFaixaRendaBairro(query.bid);
     };
@@ -66,47 +66,30 @@ export default function Bairro({ loading, query }) {
         return await service.getAtivEcoBairro(query.bid);
     };
 
-    const newChartData = (labels, data, title = '') => {
-        return {
-            labels: labels,
-            datasets: [
-                {
-                    label: title,
-                    data: data,
-                    backgroundColor: [
-                        '#42A5F5',
-                        '#66BB6A',
-                        '#FFA726',
-                        '#FFCE56',
-                    ],
-                    hoverBackgroundColor: [
-                        '#64B5F6',
-                        '#81C784',
-                        '#FFB74D',
-                        '#FFCE56',
-                    ],
-                    fill: false,
-                    borderColor: '#42A5F5',
-                },
-            ],
-        };
+    const createChartAtivEco = (ativEcoPorBairro) => {
+        const [labels, data] = separateData(ativEcoPorBairro, [
+            'Nome_Ativ',
+            'Quantidade_Empregos',
+        ]);
+        const dataset = newDataset(`Atividades Econômicas`, data);
+        return newChartData(labels, [dataset]);
     };
 
-    const newChartOptions = (title) => {
-        return {
-            plugins: {
-                title: {
-                    display: true,
-                    text: title,
-                    font: {
-                        size: 16,
-                    },
-                },
-                legend: {
-                    position: 'top',
-                },
-            },
-        };
+    const createChartFaixaRenda = (faixaRendaPorBairro, bairro) => {
+        const data = Object.values(faixaRendaPorBairro);
+        const labels = [
+            'Acima Meio SM',
+            'Baixa Renda',
+            'Pobreza',
+            'Extrema Pobreza',
+        ];
+
+        const dataset = newDataset(
+            `Quantidade de famílias em cada faixa de renda em ${bairro.Nome_Bairro}`,
+            data,
+            ['#3778C2', '#4BAC35', '#A0B335', '#F5B935']
+        );
+        return newChartData(labels, [dataset]);
     };
 
     return (
@@ -121,24 +104,22 @@ export default function Bairro({ loading, query }) {
                 <div className="flex flex-column align-items-center p-3">
                     <Chart
                         type="bar"
-                        data={newChartData(
-                            chartAtivEco.labels,
-                            chartAtivEco.data
-                        )}
+                        data={chartAtivEco}
                         width="80rem"
                         height="40rem"
-                        options={newChartOptions(chartAtivEco.title)}
+                        options={newChartOptions(
+                            `15 Atividades econômicas mais presentes em ${bairro.Nome_Bairro}`
+                        )}
                     />
                     <Divider />
                     <Chart
                         type="pie"
-                        data={newChartData(
-                            chartFaixaRenda.labels,
-                            chartFaixaRenda.data
-                        )}
+                        data={chartFaixaRenda}
                         width="35rem"
                         height="35rem"
-                        options={newChartOptions(chartFaixaRenda.title)}
+                        options={newChartOptions(
+                            `Quantidade de famílias em cada faixa de renda em ${bairro.Nome_Bairro}`
+                        )}
                     />
                 </div>
             )}
