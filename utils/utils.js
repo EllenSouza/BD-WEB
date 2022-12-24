@@ -37,7 +37,7 @@ export function newChartData(labels, datasets) {
  * @param {Array<string>} backgroundColor
  * @returns Dataset
  */
-export function newDataset(label, data, backgroundColor = []) {
+export function newDataset(label, data, backgroundColor = ['#2057D4']) {
     return {
         label: label,
         data: data,
