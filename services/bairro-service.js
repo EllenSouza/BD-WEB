@@ -10,6 +10,17 @@ export class BairroService {
         return res.data;
     }
 
+    async getMaxFaixaRenda() {
+        const res = await (
+            await fetch(`${BASE_URL}/bairro/faixa_renda/max`)
+        ).json();
+        return res.data;
+    }
+
+    //------------------------->>
+    // Métodos de 1 bairro
+    //------------------------->>
+
     /**
      * Busca as informações de um bairro específico
      * @param {int} cod_bairro
@@ -21,10 +32,6 @@ export class BairroService {
         ).json();
         return res.data;
     }
-
-    //------------------------->>
-    // Métodos para os gráficos
-    //------------------------->>
 
     /**
      * Busca as atividades econômicas e seus respectivas quantidades
