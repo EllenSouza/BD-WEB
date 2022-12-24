@@ -10,17 +10,12 @@ import { BarSkeleton } from '../../components/skeletons/bar_skeleton';
 import { PieSkeleton } from '../../components/skeletons/pie_skeleton';
 // Utils
 import { separateData } from '../../utils/utils';
-
-const initChart = {
-    labels: [],
-    data: [],
-    title: '',
-};
+import C from '../../utils/constants';
 
 export default function Bairro({ loading, query }) {
     const service = new BairroService();
-    const [chartFaixaRenda, setChartFaixaRenda] = useState(initChart);
-    const [chartAtivEco, setChartAtivEco] = useState(initChart);
+    const [chartFaixaRenda, setChartFaixaRenda] = useState(C.INITCHAT);
+    const [chartAtivEco, setChartAtivEco] = useState(C.INITCHAT);
     const [loadingPage, setLoadingPage] = useState(false);
 
     useEffect(() => {
@@ -34,11 +29,10 @@ export default function Bairro({ loading, query }) {
                         getAtivEcoBairro(),
                         getFaixaRendaBairro(),
                     ]);
-                let [labels, data] = separateData(
-                    ativEcoPorBairro,
+                let [labels, data] = separateData(ativEcoPorBairro, [
                     'Nome_Ativ',
-                    'Quantidade_Empregos'
-                );
+                    'Quantidade_Empregos',
+                ]);
                 setChartAtivEco({
                     labels,
                     data,
