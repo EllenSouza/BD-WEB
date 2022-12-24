@@ -35,6 +35,7 @@ export default function PesquisaBairro({ loading, bairros }) {
         pobreza: { Nome_Bairro: '', Pobreza: -1 },
         extrema_pobreza: { Nome_Bairro: '', Extrema_Pobreza: -1 },
     });
+    const [bairrosMaisFavelas, setBairrosMaisFavelas] = useState([]);
     const [selectedBairro, setSelectedBairro] = useState('');
 
     useEffect(() => {
@@ -42,11 +43,16 @@ export default function PesquisaBairro({ loading, bairros }) {
             try {
                 loading(true);
                 setLoadingPage(true);
-                const [maxFaixaRenda, faixaRendaPorAP] = await Promise.all([
-                    getMaxFaixaRenda(),
-                    getFaixaRendaPorAP(),
-                ]);
+                const [maxFaixaRenda, faixaRendaPorAP, bairrosMaisFavelas] =
+                    await Promise.all([
+                        getMaxFaixaRenda(),
+                        getFaixaRendaPorAP(),
+                        getBairrosMaisFavelas(),
+                    ]);
+
                 setMaxFaixaRenda(maxFaixaRenda);
+                setBairrosMaisFavelas(bairrosMaisFavelas);
+
                 const chartFaixaRendaAP =
                     createChartFaixaRendaAP(faixaRendaPorAP);
                 setChartFaixaRendaAP(chartFaixaRendaAP);
@@ -60,11 +66,15 @@ export default function PesquisaBairro({ loading, bairros }) {
     }, []);
 
     const getMaxFaixaRenda = async () => {
-        return await service.getMaxFaixaRenda();
+        return service.getMaxFaixaRenda();
     };
 
     const getFaixaRendaPorAP = async () => {
-        return await service.getFaixaRendaPorAP();
+        return service.getFaixaRendaPorAP();
+    };
+
+    const getBairrosMaisFavelas = async () => {
+        return service.getBairrosMaisFavelas();
     };
 
     const createChartFaixaRendaAP = (faixaRendaPorAP) => {
@@ -132,6 +142,87 @@ export default function PesquisaBairro({ loading, bairros }) {
         );
     };
 
+    const tabFaixaRenda = (
+        <>
+            <div className="flex flex-column align-items-center">
+                <header>
+                    <h2 className="primary">
+                        Bairros com maiores índices de cada faixa de renda
+                    </h2>
+                </header>
+                <main className="flex m-3 gap-8 flex-wrapper">
+                    <section className="flex flex-column align-items-center">
+                        <h4>Extrema Pobreza</h4>
+                        <Chip
+                            className="bg-primary"
+                            label={`${maxFaixaRenda.extrema_pobreza.Nome_Bairro}: 
+                                            ${maxFaixaRenda.extrema_pobreza.Extrema_Pobreza}`}
+                        />
+                    </section>
+                    <section className="flex flex-column align-items-center">
+                        <h4>Pobreza</h4>
+                        <Chip
+                            className="bg-primary"
+                            label={`${maxFaixaRenda.pobreza.Nome_Bairro}: ${maxFaixaRenda.pobreza.Pobreza}`}
+                        />
+                    </section>
+                    <section className="flex flex-column align-items-center">
+                        <h4>Baixa Renda</h4>
+                        <Chip
+                            className="bg-primary"
+                            label={`${maxFaixaRenda.baixa_renda.Nome_Bairro}: 
+                                            ${maxFaixaRenda.baixa_renda.Baixa_Renda}`}
+                        />
+                    </section>
+                    <section className="flex flex-column align-items-center">
+                        <h4>Acima 1/2 S.M</h4>
+                        <Chip
+                            className="bg-primary"
+                            label={`${maxFaixaRenda.acima_meio_sm.Nome_Bairro}: 
+                                        ${maxFaixaRenda.acima_meio_sm.Acima_Meio_SM}`}
+                        />
+                    </section>
+                </main>
+            </div>
+            <Divider />
+            <Chart
+                type="bar"
+                data={chartFaixaRendaAP}
+                options={newChartOptions(
+                    'Quantidade de famílias em cada faixa de renda por área de planejamento'
+                )}
+            />
+        </>
+    );
+
+    const tabFavela = (
+        <>
+            <div className="flex flex-column align-items-center">
+                <header>
+                    <h2 className="primary">
+                        Top 3 Bairros com maior número de favelas
+                    </h2>
+                </header>
+                <main className="flex m-3 gap-8 flex-wrapper">
+                    {bairrosMaisFavelas.map((bairro) => {
+                        return (
+                            <section
+                                key={bairro.Nome_Bairro}
+                                className="flex flex-column align-items-center"
+                            >
+                                <Chip
+                                    className="bg-primary"
+                                    label={`${bairro.Nome_Bairro}: 
+                                            ${bairro.Quant_Favelas}`}
+                                />
+                            </section>
+                        );
+                    })}
+                </main>
+            </div>
+        </>
+    );
+
     return (
         <>
             <div className="flex flex-column gap-4 p-3">
@@ -179,64 +270,17 @@ export default function PesquisaBairro({ loading, bairros }) {
                     </div>
                 ) : (
                     <TabView
+                        renderActiveOnly
                         activeIndex={activeTab}
                         onTabChange={(e) => setActiveTab(e.index)}
                     >
                         <TabPanel header="Faixa de Renda">
-                            <div className="flex flex-column align-items-center">
-                                <header>
-                                    <h2 className="primary">
-                                        Bairros com maiores índices de cada
-                                        faixa de renda
-                                    </h2>
-                                </header>
-                                <main className="flex m-3 gap-8 flex-wrapper">
-                                    <section className="flex flex-column align-items-center">
-                                        <h4>Extrema Pobreza</h4>
-                                        <Chip
-                                            className="bg-primary"
-                                            label={`${maxFaixaRenda.extrema_pobreza.Nome_Bairro}: 
-                                            ${maxFaixaRenda.extrema_pobreza.Extrema_Pobreza}`}
-                                        />
-                                    </section>
-                                    <section className="flex flex-column align-items-center">
-                                        <h4>Pobreza</h4>
-                                        <Chip
-                                            className="bg-primary"
-                                            label={`${maxFaixaRenda.pobreza.Nome_Bairro}: ${maxFaixaRenda.pobreza.Pobreza}`}
-                                        />
-                                    </section>
-                                    <section className="flex flex-column align-items-center">
-                                        <h4>Baixa Renda</h4>
-                                        <Chip
-                                            className="bg-primary"
-                                            label={`${maxFaixaRenda.baixa_renda.Nome_Bairro}: 
-                                            ${maxFaixaRenda.baixa_renda.Baixa_Renda}`}
-                                        />
-                                    </section>
-                                    <section className="flex flex-column align-items-center">
-                                        <h4>Acima 1/2 S.M</h4>
-                                        <Chip
-                                            className="bg-primary"
-                                            label={`${maxFaixaRenda.acima_meio_sm.Nome_Bairro}: 
-                                        ${maxFaixaRenda.acima_meio_sm.Acima_Meio_SM}`}
-                                        />
-                                    </section>
-                                </main>
-                            </div>
-                            <Divider />
-                            <Chart
-                                type="bar"
-                                data={chartFaixaRendaAP}
-                                options={newChartOptions(
-                                    'Quantidade de famílias em cada faixa de renda por área de planejamento'
-                                )}
-                            />
+                            {tabFaixaRenda}
                         </TabPanel>
                         <TabPanel header="Atividades Econômicas">
                             Content II
                         </TabPanel>
-                        <TabPanel header="Favelas">Content III</TabPanel>
+                        <TabPanel header="Favelas">{tabFavela}</TabPanel>
                     </TabView>
                 )}
             </div>

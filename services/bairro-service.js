@@ -24,6 +24,11 @@ export class BairroService {
         return res.data;
     }
 
+    async getBairrosMaisFavelas() {
+        const res = await (await fetch(`${BASE_URL}/bairro/favela/max`)).json();
+        return res.data;
+    }
+
     //------------------------->>
     // Métodos de 1 bairro
     //------------------------->>
