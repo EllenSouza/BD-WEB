@@ -1,3 +1,8 @@
+/**
+ * Busca a quantidade de cada faixa de renda 
+ * de um bairro específico
+ */
+
 import { executeQuery } from '../../../../lib/db';
 export default async function bairro(req, res) {
     try {
