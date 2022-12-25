@@ -29,6 +29,11 @@ export class BairroService {
         return res.data;
     }
 
+    async getBairrosFavelas() {
+        const res = await (await fetch(`${BASE_URL}/bairro/favela`)).json();
+        return res.data;
+    }
+
     //------------------------->>
     // Métodos de 1 bairro
     //------------------------->>
