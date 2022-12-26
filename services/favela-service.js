@@ -16,4 +16,11 @@ export class FavelaService {
         ).json();
         return res.data;
     }
+
+    async getQtdFavelaPorUrbanizacao() {
+        const res = await (
+            await fetch(BASE_URL + '/favela/urbanizacao')
+        ).json();
+        return res.data;
+    }
 }
