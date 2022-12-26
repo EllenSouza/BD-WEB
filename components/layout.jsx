@@ -14,20 +14,27 @@ export default function Layout({ children }) {
     const items = [
         {
             label: 'Início',
+            icon: 'pi pi-home',
             command: () => router.push('/'),
         },
         {
             label: 'Bairro',
+            icon: 'pi pi-map',
             command: () => startSkeleton('/bairro'),
         },
         {
             label: 'Favela',
+            icon: 'pi pi-map-marker',
             command: () => startSkeleton('/favela'),
         },
     ];
 
     const end = (
-        <Button label="Envolvidos" className="p-button-outlined p-button-sm" />
+        <Button
+            icon="pi pi-users"
+            label="Envolvidos"
+            className="p-button-outlined p-button-sm"
+        />
     );
 
     useEffect(() => {
