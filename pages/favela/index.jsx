@@ -30,6 +30,7 @@ export default function Favelas({ loading, favelas }) {
 
     const [chartFavBairro, setChartFavBairro] = useState(C.INITCHAT);
     const [chartFavAP, setChartFavAP] = useState(C.INITCHAT);
+    const [chartFavUrb, setChartFavUrb] = useState(C.INITCHAT);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -41,14 +42,22 @@ export default function Favelas({ loading, favelas }) {
                 loading(true);
                 setLoadingPage(true);
 
-                const [qtdFavelasPorBairro, qtdFavelasPorAP] =
-                    await Promise.all([getFavelasPorBairro(), getQtdFavAP()]);
+                const [qtdFavelasPorBairro, qtdFavelasPorAP, qtdFavlasPorUrb] =
+                    await Promise.all([
+                        getFavelasPorBairro(),
+                        getQtdFavAP(),
+                        getQtdFavUrb(),
+                    ]);
+
                 const _chartFavBairro =
                     createChartFavBairro(qtdFavelasPorBairro);
                 setChartFavBairro(_chartFavBairro);
 
                 const _chartFavPorAP = createChartFavAP(qtdFavelasPorAP);
                 setChartFavAP(_chartFavPorAP);
+
+                const _chartFavPorUrb = createChartFavUrb(qtdFavlasPorUrb);
+                setChartFavUrb(_chartFavPorUrb);
             } catch (error) {
             } finally {
                 loading(false);
@@ -65,6 +74,10 @@ export default function Favelas({ loading, favelas }) {
     const getQtdFavAP = async () => {
         const resp = favelaService.getQtdFavelasPorAP();
         return resp;
+    };
+
+    const getQtdFavUrb = async () => {
+        return favelaService.getQtdFavelaPorUrbanizacao();
     };
 
     const createChartFavBairro = (qtdFavelasPorBairro) => {
@@ -95,6 +108,20 @@ export default function Favelas({ loading, favelas }) {
         return newChartData(labels, [dataset]);
     };
 
+    const createChartFavUrb = (qtdFavlasPorUrb) => {
+        const [labels, data] = separateData(qtdFavlasPorUrb, [
+            'Grau_de_urbanizacao',
+            'Qtd_Favelas',
+        ]);
+
+        const dataset = newDataset(['Quantidade de favelas'], data, [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4cd07c',
+        ]);
+        return newChartData(labels, [dataset]);
+    };
     const tabPanoramaGeral = (
         <div className="flex flex-column justify-content-center alingn-items-center">
             <Chart
@@ -106,7 +133,7 @@ export default function Favelas({ loading, favelas }) {
                 )}
             />
             <Divider />
-            <div className='flex justify-content-center'>
+            <div className="flex justify-content-center">
                 <Chart
                     id="FavPorAP"
                     type="doughnut"
@@ -118,6 +145,20 @@ export default function Favelas({ loading, favelas }) {
                     )}
                 />
             </div>
+        </div>
+    );
+    const tabGrauUrbanizacao = (
+        <div className="flex justify-content-center">
+            <Chart
+                id="FavPorGrauUrbanizacao"
+                type="pie"
+                width="35rem"
+                height="35rem"
+                data={chartFavUrb}
+                options={newChartOptions(
+                    'Quantidade de favelas em cada grau de urbanização'
+                )}
+            />
         </div>
     );
 
@@ -175,7 +216,7 @@ export default function Favelas({ loading, favelas }) {
                             {tabPanoramaGeral}
                         </TabPanel>
                         <TabPanel header="Grau de Urbanização">
-                            Content II
+                            {tabGrauUrbanizacao}
                         </TabPanel>
                         <TabPanel header="População">Content III</TabPanel>
                     </TabView>
