@@ -31,6 +31,7 @@ export default function Favelas({ loading, favelas }) {
     const [chartFavBairro, setChartFavBairro] = useState(C.INITCHAT);
     const [chartFavAP, setChartFavAP] = useState(C.INITCHAT);
     const [chartFavUrb, setChartFavUrb] = useState(C.INITCHAT);
+    const [chartFavPop, setChartFavPop] = useState(C.INITCHAT);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -42,11 +43,12 @@ export default function Favelas({ loading, favelas }) {
                 loading(true);
                 setLoadingPage(true);
 
-                const [qtdFavelasPorBairro, qtdFavelasPorAP, qtdFavlasPorUrb] =
+                const [qtdFavelasPorBairro, qtdFavelasPorAP, qtdFavelasPorUrb, qtdFavelasPorPop] =
                     await Promise.all([
                         getFavelasPorBairro(),
                         getQtdFavAP(),
                         getQtdFavUrb(),
+                        getQtdFavPop(),
                     ]);
 
                 const _chartFavBairro =
@@ -56,8 +58,12 @@ export default function Favelas({ loading, favelas }) {
                 const _chartFavPorAP = createChartFavAP(qtdFavelasPorAP);
                 setChartFavAP(_chartFavPorAP);
 
-                const _chartFavPorUrb = createChartFavUrb(qtdFavlasPorUrb);
+                const _chartFavPorUrb = createChartFavUrb(qtdFavelasPorUrb);
                 setChartFavUrb(_chartFavPorUrb);
+
+                const _chartFavPop = createChartFavPop(qtdFavelasPorPop);
+                setChartFavPop(_chartFavPop);
+
             } catch (error) {
             } finally {
                 loading(false);
@@ -79,6 +85,10 @@ export default function Favelas({ loading, favelas }) {
     const getQtdFavUrb = async () => {
         return favelaService.getQtdFavelaPorUrbanizacao();
     };
+
+    const getQtdFavPop = async () => {
+        return favelaService.getQtdFavelasPorPopulacao();
+    }
 
     const createChartFavBairro = (qtdFavelasPorBairro) => {
         const [labels, data] = separateData(qtdFavelasPorBairro, [
@@ -108,8 +118,8 @@ export default function Favelas({ loading, favelas }) {
         return newChartData(labels, [dataset]);
     };
 
-    const createChartFavUrb = (qtdFavlasPorUrb) => {
-        const [labels, data] = separateData(qtdFavlasPorUrb, [
+    const createChartFavUrb = (qtdFavelasPorUrb) => {
+        const [labels, data] = separateData(qtdFavelasPorUrb, [
             'Grau_de_urbanizacao',
             'Qtd_Favelas',
         ]);
@@ -119,6 +129,20 @@ export default function Favelas({ loading, favelas }) {
             '#36A2EB',
             '#FFCE56',
             '#4cd07c',
+        ]);
+        return newChartData(labels, [dataset]);
+    };
+    const createChartFavPop = (qtdFavelasPorPop) => {
+        const [labels, data] = separateData(qtdFavelasPorPop, [
+            'Qtd_de_domicilios',
+            'Qtd_Favelas',
+        ]);
+
+        const dataset = newDataset(['Quantidade de favelas'], data, [
+            '#66BB6A',
+            '#FFA726',
+            '#26C6DA',
+            '#7E57C2',
         ]);
         return newChartData(labels, [dataset]);
     };
@@ -157,6 +181,20 @@ export default function Favelas({ loading, favelas }) {
                 data={chartFavUrb}
                 options={newChartOptions(
                     'Quantidade de favelas em cada grau de urbanização'
+                )}
+            />
+        </div>
+    );
+    const tabPopulacao = (
+        <div className="flex justify-content-center">
+            <Chart
+                id="FavPorPopulacao"
+                type="polarArea"
+                width="35rem"
+                height="35rem"
+                data={chartFavPop}
+                opitions={newChartOptions(
+                    'Quantidade de favelas em cada faixa de domicíios'
                 )}
             />
         </div>
@@ -218,7 +256,9 @@ export default function Favelas({ loading, favelas }) {
                         <TabPanel header="Grau de Urbanização">
                             {tabGrauUrbanizacao}
                         </TabPanel>
-                        <TabPanel header="População">Content III</TabPanel>
+                        <TabPanel header="População">
+                            {tabPopulacao}    
+                        </TabPanel>
                     </TabView>
                 )}
             </div>

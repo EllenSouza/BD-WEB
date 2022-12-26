@@ -23,4 +23,10 @@ export class FavelaService {
         ).json();
         return res.data;
     }
+    async getQtdFavelasPorPopulacao(){
+        const res = await (
+            await fetch(BASE_URL + '/favela/populacao')
+        ).json();
+        return res.data;
+    }
 }
