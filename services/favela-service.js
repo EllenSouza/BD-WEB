@@ -1,20 +1,19 @@
-import {BASE_URL} from '../utils/config'
+import { BASE_URL } from '../utils/config';
 export class FavelaService {
+    async getFavelas() {
+        const res = await (await fetch(BASE_URL + '/favela')).json();
+        return res.data;
+    }
+
     async getQtdFavelasPorBairro() {
-        console.log( process.env.BASE_URL+ '/favela');
-        const res = await (await fetch(BASE_URL + '/favela')).json();
-        return res.Quantidade_de_favelas_por_bairro;
+        const res = await (await fetch(BASE_URL + '/favela/bairro')).json();
+        return res.data;
     }
+
     async getQtdFavelasPorAP() {
-        const res = await (await fetch(BASE_URL + '/favela')).json();
-        return res.Quantidade_de_favelas_por_área_de_planejamento;
-    }
-    async getBairrosMaiorExtremaPobreza(){
-        const res = await (await fetch(BASE_URL + '/favela')).json();
-        return res.Bairros_com_mais_extrema_pobreza;
-    }
-    async getFaixaRendaPorAP(){
-        const res = await (await fetch(BASE_URL + '/favela')).json();
-        return res.Faixa_renda_por_AP;
+        const res = await (
+            await fetch(BASE_URL + '/favela/area_planejamento')
+        ).json();
+        return res.data;
     }
 }
