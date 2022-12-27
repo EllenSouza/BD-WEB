@@ -6,12 +6,13 @@ import { Chip } from 'primereact/chip';
 import { Tree } from 'primereact/tree';
 import { Panel } from 'primereact/panel';
 import { Chart } from 'primereact/chart';
+import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Ripple } from 'primereact/ripple';
 import { Divider } from 'primereact/divider';
 import { Dropdown } from 'primereact/dropdown';
+import { TreeTable } from 'primereact/treetable';
 import { TabView, TabPanel } from 'primereact/tabview';
-
 // Services
 import { BairroService } from '../../services/bairro-service';
 // Components
@@ -38,6 +39,7 @@ export default function PesquisaBairro({ loading, bairros }) {
         extrema_pobreza: { Nome_Bairro: '', Extrema_Pobreza: -1 },
     });
     const [bairrosMaisFavelas, setBairrosMaisFavelas] = useState([]);
+    const [bairrosMaisAtivEco, setBairrosMaisAtivEco] = useState([]);
     const [nodes, setNodes] = useState([]);
     const [selectedBairro, setSelectedBairro] = useState('');
 
@@ -51,11 +53,13 @@ export default function PesquisaBairro({ loading, bairros }) {
                     faixaRendaPorAP,
                     bairrosMaisFavelas,
                     bairrosFavelas,
+                    bairrosMaisAtivEco,
                 ] = await Promise.all([
                     getMaxFaixaRenda(),
                     getFaixaRendaPorAP(),
                     getBairrosMaisFavelas(),
                     getBairrosFavelas(),
+                    getBairrosMaisAtivEco(),
                 ]);
 
                 setMaxFaixaRenda(maxFaixaRenda);
@@ -67,6 +71,8 @@ export default function PesquisaBairro({ loading, bairros }) {
 
                 const _nodes = createTreeBairroFavela(bairrosFavelas);
                 setNodes(_nodes);
+
+                setBairrosMaisAtivEco(bairrosMaisAtivEco);
             } catch (error) {
             } finally {
                 loading(false);
@@ -90,6 +96,10 @@ export default function PesquisaBairro({ loading, bairros }) {
 
     const getBairrosFavelas = async () => {
         return service.getBairrosFavelas();
+    };
+
+    const getBairrosMaisAtivEco = async () => {
+        return service.getBairrosMaisAtivEco();
     };
 
     const createChartFaixaRendaAP = (faixaRendaPorAP) => {
@@ -245,6 +255,37 @@ export default function PesquisaBairro({ loading, bairros }) {
         </>
     );
 
+    const tabAtivEco = (
+        <>
+            <div className="flex flex-column align-items-center">
+                <header>
+                    <h2 className="primary">
+                        Top 3 Bairros com maior número de empregados
+                    </h2>
+                </header>
+                <main className="flex m-3 gap-8 flex-wrapper">
+                    {bairrosMaisAtivEco.map((bairro) => {
+                        return (
+                            <section
+                                key={bairro.Nome_Bairro}
+                                className="flex flex-column align-items-center"
+                            >
+                                <Chip
+                                    className="bg-primary"
+                                    label={`${bairro.Nome_Bairro}: 
+                                            ${bairro.Qtd_Empregos}`}
+                                />
+                            </section>
+                        );
+                    })}
+                </main>
+            </div>
+            {/* <Divider />
+            <h2 className="text-center">Bairros e suas respectivas favelas</h2>
+            <Tree value={nodes} filter filterMode="lenient" /> */}
+        </>
+    );
+
     const tabFavela = (
         <>
             <div className="flex flex-column align-items-center">
@@ -331,7 +372,7 @@ export default function PesquisaBairro({ loading, bairros }) {
                             {tabFaixaRenda}
                         </TabPanel>
                         <TabPanel header="Atividades Econômicas">
-                            Content II
+                            {tabAtivEco}
                         </TabPanel>
                         <TabPanel header="Favelas">{tabFavela}</TabPanel>
                     </TabView>
