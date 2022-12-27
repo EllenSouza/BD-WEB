@@ -10,6 +10,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
 import { Dropdown } from 'primereact/dropdown';
+import { InputText } from 'primereact/inputtext';
 import { TreeTable } from 'primereact/treetable';
 import { TabView, TabPanel } from 'primereact/tabview';
 // Services
@@ -44,8 +45,7 @@ export default function PesquisaBairro({ loading, bairros }) {
     const [nodes, setNodes] = useState([]);
     const [nodesAtivEco, setNodesAtivEco] = useState([]);
     const [selectedBairro, setSelectedBairro] = useState('');
-
-    useEffect(() => console.log(nodesAtivEco), [nodesAtivEco]);
+    const [globalFilter, setGlobalFilter] = useState('');
 
     useEffect(() => {
         const initScreen = async () => {
@@ -222,7 +222,6 @@ export default function PesquisaBairro({ loading, bairros }) {
                 children,
             };
         });
-        // console.log(tree);
         return tree;
     };
 
@@ -236,6 +235,20 @@ export default function PesquisaBairro({ loading, bairros }) {
     const rowClassName = (node) => {
         return { 'font-bold': node.children };
     };
+
+    const treeTableHeader = (
+        <div className="flex justify-content-between align-items-center">
+            <h3>Bairros e suas respectivas atividades econômicas</h3>
+            <div className="p-input-icon-left">
+                <i className="pi pi-search"></i>
+                <InputText
+                    type="search"
+                    onInput={(e) => setGlobalFilter(e.target.value)}
+                    placeholder="Pesquisar"
+                />
+            </div>
+        </div>
+    );
 
     const tabFaixaRenda = (
         <>
@@ -324,7 +337,8 @@ export default function PesquisaBairro({ loading, bairros }) {
                 removableSort
                 stripedRows
                 rowClassName={rowClassName}
-                header="Bairros e suas respectivas atividades econômicas"
+                globalFilter={globalFilter}
+                header={treeTableHeader}
             >
                 <Column field="name" header="Nome" expander sortable />
                 <Column
