@@ -1,8 +1,13 @@
+import { useState } from 'react';
+
 import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 
 export default function Home() {
     const router = useRouter();
+    const [loadingBairro, setLoadingBairro] = useState(false);
+    const [loadingFavela, setLoadingFavela] = useState(false);
+
     return (
         <div className="p-5">
             <header>
@@ -18,16 +23,34 @@ export default function Home() {
                 </p>
                 <div className="flex gap-3 justify-content-center mt-7">
                     <Button
-                        icon="pi pi-chevron-right"
+                        icon={
+                            loadingBairro
+                                ? 'pi pi-spin pi-sun'
+                                : 'pi pi-chevron-right'
+                        }
                         iconPos="right"
                         label="Consultas Bairro"
-                        onClick={() => router.push('/bairro')}
-                        />
+                        onClick={() => {
+                            router.asPath != '/bairro'
+                                ? setLoadingBairro(true)
+                                : setLoadingBairro(false);
+                            router.push('/bairro');
+                        }}
+                    />
                     <Button
-                        icon="pi pi-chevron-right"
+                        icon={
+                            loadingFavela
+                                ? 'pi pi-spin pi-sun'
+                                : 'pi pi-chevron-right'
+                        }
                         iconPos="right"
                         label="Consultas Favelas"
-                        onClick={() => router.push('/favela')}
+                        onClick={() => {
+                            router.asPath != '/favela'
+                                ? setLoadingFavela(true)
+                                : setLoadingFavela(false);
+                            router.push('/favela');
+                        }}
                     />
                 </div>
             </main>

@@ -6,9 +6,11 @@ import { Chip } from 'primereact/chip';
 import { Tree } from 'primereact/tree';
 import { Panel } from 'primereact/panel';
 import { Chart } from 'primereact/chart';
+import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
 import { Dropdown } from 'primereact/dropdown';
+import { TreeTable } from 'primereact/treetable';
 import { TabView, TabPanel } from 'primereact/tabview';
 // Services
 import { BairroService } from '../../services/bairro-service';
@@ -38,8 +40,12 @@ export default function PesquisaBairro({ loading, bairros }) {
         extrema_pobreza: { Nome_Bairro: '', Extrema_Pobreza: -1 },
     });
     const [bairrosMaisFavelas, setBairrosMaisFavelas] = useState([]);
+    const [bairrosMaisAtivEco, setBairrosMaisAtivEco] = useState([]);
     const [nodes, setNodes] = useState([]);
+    const [nodesAtivEco, setNodesAtivEco] = useState([]);
     const [selectedBairro, setSelectedBairro] = useState('');
+
+    useEffect(() => console.log(nodesAtivEco), [nodesAtivEco]);
 
     useEffect(() => {
         const initScreen = async () => {
@@ -51,11 +57,15 @@ export default function PesquisaBairro({ loading, bairros }) {
                     faixaRendaPorAP,
                     bairrosMaisFavelas,
                     bairrosFavelas,
+                    bairrosMaisAtivEco,
+                    bairrosAtivEco,
                 ] = await Promise.all([
                     getMaxFaixaRenda(),
                     getFaixaRendaPorAP(),
                     getBairrosMaisFavelas(),
                     getBairrosFavelas(),
+                    getBairrosMaisAtivEco(),
+                    getBairrosAtivEco(),
                 ]);
 
                 setMaxFaixaRenda(maxFaixaRenda);
@@ -67,6 +77,11 @@ export default function PesquisaBairro({ loading, bairros }) {
 
                 const _nodes = createTreeBairroFavela(bairrosFavelas);
                 setNodes(_nodes);
+
+                setBairrosMaisAtivEco(bairrosMaisAtivEco);
+
+                const _nodesAtivEco = createTreeBairroAtivEco(bairrosAtivEco);
+                setNodesAtivEco(_nodesAtivEco);
             } catch (error) {
             } finally {
                 loading(false);
@@ -90,6 +105,14 @@ export default function PesquisaBairro({ loading, bairros }) {
 
     const getBairrosFavelas = async () => {
         return service.getBairrosFavelas();
+    };
+
+    const getBairrosAtivEco = async () => {
+        return service.getBairrosAtivEco();
+    };
+
+    const getBairrosMaisAtivEco = async () => {
+        return service.getBairrosMaisAtivEco();
     };
 
     const createChartFaixaRendaAP = (faixaRendaPorAP) => {
@@ -157,10 +180,49 @@ export default function PesquisaBairro({ loading, bairros }) {
                 label: bairro,
                 data: bairro,
                 icon: 'pi pi-sitemap',
-                className: 'blue-200',
                 children,
             };
         });
+        return tree;
+    };
+
+    const createTreeBairroAtivEco = (bairrosAtivEco) => {
+        const bairros = [
+            ...new Set(
+                bairrosAtivEco.map((reg) => {
+                    return reg.Nome_Bairro;
+                })
+            ),
+        ];
+
+        const tree = bairros.map((bairro, index) => {
+            const children = bairrosAtivEco
+                .filter(
+                    (reg) => reg.Nome_Bairro == bairro && reg.Nome_Ativ != null
+                )
+                .map((reg, ind) => {
+                    return {
+                        key: `${index}-${ind}`,
+                        data: {
+                            name: reg.Nome_Ativ,
+                            quantity: reg.Quantidade_Empregos,
+                        },
+                    };
+                });
+            const sum = children.reduce(
+                (acc, ativEco) => acc + ativEco.data.quantity,
+                0
+            );
+            return {
+                key: `${index}`,
+                data: {
+                    name: bairro,
+                    quantity: sum,
+                },
+                children,
+            };
+        });
+        // console.log(tree);
         return tree;
     };
 
@@ -169,6 +231,10 @@ export default function PesquisaBairro({ loading, bairros }) {
         if (selectedBairro == '') return;
 
         router.push(`/bairro/${selectedBairro.Cod_Bairro}`);
+    };
+
+    const rowClassName = (node) => {
+        return { 'font-bold': node.children };
     };
 
     const tabFaixaRenda = (
@@ -221,6 +287,52 @@ export default function PesquisaBairro({ loading, bairros }) {
                     'Quantidade de famílias em cada faixa de renda por área de planejamento'
                 )}
             />
+        </>
+    );
+
+    const tabAtivEco = (
+        <>
+            <div className="flex flex-column align-items-center">
+                <header>
+                    <h2 className="primary">
+                        Top 3 Bairros com maior número de empregados
+                    </h2>
+                </header>
+                <main className="flex m-3 gap-8 flex-wrapper">
+                    {bairrosMaisAtivEco.map((bairro) => {
+                        return (
+                            <section
+                                key={bairro.Nome_Bairro}
+                                className="flex flex-column align-items-center"
+                            >
+                                <Chip
+                                    className="bg-primary"
+                                    label={`${bairro.Nome_Bairro}: 
+                                            ${bairro.Qtd_Empregos}`}
+                                />
+                            </section>
+                        );
+                    })}
+                </main>
+            </div>
+            <Divider />
+            <TreeTable
+                value={nodesAtivEco}
+                paginator
+                rows={5}
+                rowsPerPageOptions={[5, 10, 20]}
+                removableSort
+                stripedRows
+                rowClassName={rowClassName}
+                header="Bairros e suas respectivas atividades econômicas"
+            >
+                <Column field="name" header="Nome" expander sortable />
+                <Column
+                    field="quantity"
+                    header="Quantidade de empregos"
+                    sortable
+                />
+            </TreeTable>
         </>
     );
 
@@ -310,7 +422,7 @@ export default function PesquisaBairro({ loading, bairros }) {
                             {tabFaixaRenda}
                         </TabPanel>
                         <TabPanel header="Atividades Econômicas">
-                            Content II
+                            {tabAtivEco}
                         </TabPanel>
                         <TabPanel header="Favelas">{tabFavela}</TabPanel>
                     </TabView>
