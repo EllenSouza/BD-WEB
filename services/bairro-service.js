@@ -34,6 +34,11 @@ export class BairroService {
         return res.data;
     }
 
+    async getBairrosAtivEco() {
+        const res = await (await fetch(`${BASE_URL}/bairro/ativ_eco`)).json();
+        return res.data;
+    }
+
     async getBairrosMaisAtivEco() {
         const res = await (
             await fetch(`${BASE_URL}/bairro/ativ_eco/max`)

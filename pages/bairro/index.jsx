@@ -41,7 +41,10 @@ export default function PesquisaBairro({ loading, bairros }) {
     const [bairrosMaisFavelas, setBairrosMaisFavelas] = useState([]);
     const [bairrosMaisAtivEco, setBairrosMaisAtivEco] = useState([]);
     const [nodes, setNodes] = useState([]);
+    const [nodesAtivEco, setNodesAtivEco] = useState([]);
     const [selectedBairro, setSelectedBairro] = useState('');
+
+    useEffect(() => console.log(nodesAtivEco), [nodesAtivEco]);
 
     useEffect(() => {
         const initScreen = async () => {
@@ -54,12 +57,14 @@ export default function PesquisaBairro({ loading, bairros }) {
                     bairrosMaisFavelas,
                     bairrosFavelas,
                     bairrosMaisAtivEco,
+                    bairrosAtivEco,
                 ] = await Promise.all([
                     getMaxFaixaRenda(),
                     getFaixaRendaPorAP(),
                     getBairrosMaisFavelas(),
                     getBairrosFavelas(),
                     getBairrosMaisAtivEco(),
+                    getBairrosAtivEco(),
                 ]);
 
                 setMaxFaixaRenda(maxFaixaRenda);
@@ -73,6 +78,9 @@ export default function PesquisaBairro({ loading, bairros }) {
                 setNodes(_nodes);
 
                 setBairrosMaisAtivEco(bairrosMaisAtivEco);
+
+                const _nodesAtivEco = createTreeBairroAtivEco(bairrosAtivEco);
+                setNodesAtivEco(_nodesAtivEco);
             } catch (error) {
             } finally {
                 loading(false);
@@ -96,6 +104,10 @@ export default function PesquisaBairro({ loading, bairros }) {
 
     const getBairrosFavelas = async () => {
         return service.getBairrosFavelas();
+    };
+
+    const getBairrosAtivEco = async () => {
+        return service.getBairrosAtivEco();
     };
 
     const getBairrosMaisAtivEco = async () => {
@@ -167,10 +179,49 @@ export default function PesquisaBairro({ loading, bairros }) {
                 label: bairro,
                 data: bairro,
                 icon: 'pi pi-sitemap',
-                className: 'blue-200',
                 children,
             };
         });
+        return tree;
+    };
+
+    const createTreeBairroAtivEco = (bairrosAtivEco) => {
+        const bairros = [
+            ...new Set(
+                bairrosAtivEco.map((reg) => {
+                    return reg.Nome_Bairro;
+                })
+            ),
+        ];
+
+        const tree = bairros.map((bairro, index) => {
+            const children = bairrosAtivEco
+                .filter(
+                    (reg) => reg.Nome_Bairro == bairro && reg.Nome_Ativ != null
+                )
+                .map((reg, ind) => {
+                    return {
+                        key: `${index}-${ind}`,
+                        data: {
+                            name: reg.Nome_Ativ,
+                            quantity: reg.Quantidade_Empregos,
+                        },
+                    };
+                });
+            const sum = children.reduce(
+                (acc, ativEco) => acc + ativEco.data.quantity,
+                0
+            );
+            return {
+                key: `${index}`,
+                data: {
+                    name: bairro,
+                    quantity: sum,
+                },
+                children,
+            };
+        });
+        // console.log(tree);
         return tree;
     };
 
@@ -200,6 +251,10 @@ export default function PesquisaBairro({ loading, bairros }) {
                 <span className={titleClassName}>{textTittle}</span>
             </div>
         );
+    };
+
+    const rowClassName = (node) => {
+        return { 'font-bold': node.children };
     };
 
     const tabFaixaRenda = (
@@ -280,9 +335,24 @@ export default function PesquisaBairro({ loading, bairros }) {
                     })}
                 </main>
             </div>
-            {/* <Divider />
-            <h2 className="text-center">Bairros e suas respectivas favelas</h2>
-            <Tree value={nodes} filter filterMode="lenient" /> */}
+            <Divider />
+            <TreeTable
+                value={nodesAtivEco}
+                paginator
+                rows={5}
+                rowsPerPageOptions={[5, 10, 20]}
+                removableSort
+                stripedRows
+                rowClassName={rowClassName}
+                header="Bairros e suas respectivas atividades econômicas"
+            >
+                <Column field="name" header="Nome" expander sortable />
+                <Column
+                    field="quantity"
+                    header="Quantidade de empregos"
+                    sortable
+                />
+            </TreeTable>
         </>
     );
 
