@@ -1,5 +1,5 @@
 /**
- * Busca a quantidade de cada faixa de renda 
+ * Busca a quantidade de cada faixa de renda
  * de um bairro específico
  */
 
