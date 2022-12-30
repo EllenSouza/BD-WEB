@@ -77,7 +77,7 @@ export class BairroService {
     /**
      * Busca as informações de um bairro específico
      * @param {int} cod_bairro
-     * @returns {Array<Object>} Dados de um bairro
+     * @returns {Object} Dados de um bairro
      */
     async getBairro(cod_bairro) {
         const res = await (
@@ -103,7 +103,7 @@ export class BairroService {
      * Busca as quantidades de famílias em cada faixa de renda de um
      * um bairro dado.
      * @param {int} cod_bairro
-     * @returns {Array<Object>} Array com as faixas de renda
+     * @returns {Object} Quantidade de famílias em cada faixas de renda do bairro
      */
     async getFaixaRendaBairro(cod_bairro) {
         const res = await (
