@@ -46,8 +46,9 @@ export function newDataset(label, data, backgroundColor = ['#2057D4']) {
     };
 }
 
-export function newChartOptions(title) {
+export function newChartOptions(title, indexAxis = 'x') {
     return {
+        indexAxis: indexAxis,
         plugins: {
             maintainAspectRatio: false,
             aspecRatio: 0.8,
