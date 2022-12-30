@@ -22,6 +22,7 @@ import {
     newChartOptions,
 } from '../../utils/utils';
 import C from '../../utils/constants';
+import { TableSkeleton } from '../../components/skeletons/table_skeleton';
 
 export default function Bairro({ loading, query }) {
     const service = new BairroService();
@@ -120,6 +121,9 @@ export default function Bairro({ loading, query }) {
                     <BarSkeleton />
                     <Divider />
                     <PieSkeleton />
+                    <Divider />
+                    <TableSkeleton />
+                    <Divider />
                 </div>
             ) : (
                 <div className="flex flex-column align-items-center p-3">
@@ -146,6 +150,7 @@ export default function Bairro({ loading, query }) {
                     <Divider />
                     <DataTable
                         value={favelasBairro}
+                        header={`Favelas de ${bairro.Nome_Bairro}`}
                         stripedRows
                         removableSort
                         emptyMessage="Este bairro não possui favelas"
