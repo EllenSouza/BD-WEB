@@ -111,4 +111,16 @@ export class BairroService {
         ).json();
         return res.data;
     }
+
+    /**
+     * Busca as favelas presentes em um bairro dado.
+     * @param {int} cod_bairro
+     * @returns {Array<Object>} Array com as favelas do Bairro
+     */
+    async getFavelasBairro(cod_bairro) {
+        const res = await (
+            await fetch(`${BASE_URL}/bairro/favela/${cod_bairro}`)
+        ).json();
+        return res.data;
+    }
 }
