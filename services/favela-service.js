@@ -47,4 +47,13 @@ export class FavelaService {
         const res = await (await fetch(BASE_URL + '/favela/populacao')).json();
         return res.data;
     }
+
+    /**
+     * Busca as favelas e os complexos ao qual pertence
+     * @returns {Array<Object>} Array com as favelas e os complexos
+     */
+    async getFavComplexo() {
+        const res = await (await fetch(BASE_URL + '/favela/complexo')).json();
+        return res.data;
+    }
 }
