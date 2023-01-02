@@ -133,7 +133,7 @@ export default function Bairro({ loading, query }) {
                         width="80rem"
                         height="40rem"
                         options={newChartOptions(
-                            `15 Atividades econômicas mais presentes em ${bairro.Nome_Bairro}`,
+                            `Atividades econômicas mais presentes em ${bairro.Nome_Bairro}`,
                             'y'
                         )}
                     />
