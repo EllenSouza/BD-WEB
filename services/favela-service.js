@@ -10,6 +10,17 @@ export class FavelaService {
     }
 
     /**
+     * Busca um favela
+     * @returns {Object} Dados da favela
+     */
+    async getFavela(codFavela) {
+        const res = await (
+            await fetch(`${BASE_URL} + /favela/${codFavela}`)
+        ).json();
+        return res.data;
+    }
+
+    /**
      * Busca top 30 quantidade de favelas em cada bairro
      * @returns {Array<Object>} Array com os bairros e a quantidade de favelas
      */

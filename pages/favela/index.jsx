@@ -1,5 +1,6 @@
 // React & Next
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 // Primereact
 import { Tree } from 'primereact/tree';
 import { Chart } from 'primereact/chart';
@@ -25,6 +26,7 @@ import {
 
 export default function Favelas({ loading, favelas }) {
     const favelaService = new FavelaService();
+    const router = useRouter();
     const [selectedFavela, setSelectedFavela] = useState('');
     const [activeTab, setActiveTab] = useState(0);
     const [loadingPage, setLoadingPage] = useState(false);
@@ -38,6 +40,7 @@ export default function Favelas({ loading, favelas }) {
 
     const handleSearch = (e) => {
         e.preventDefault();
+        router.push(`/favela/${selectedFavela.Cod_Fav}`);
     };
 
     useEffect(() => {
