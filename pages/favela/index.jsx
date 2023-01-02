@@ -260,17 +260,22 @@ export default function Favelas({ loading, favelas }) {
     );
 
     const tabPopulacao = (
-        <div className="flex justify-content-center">
-            <Chart
-                id="FavPorPopulacao"
-                type="polarArea"
-                width="35rem"
-                height="35rem"
-                data={chartFavPop}
-                opitions={newChartOptions(
-                    'Quantidade de favelas em cada faixa de domicíios'
-                )}
-            />
+        <div>
+            <div className="flex justify-content-center mt-2 ">
+                <h4>Quantidade de favelas em cada faixa de domicílios</h4>
+            </div>
+            <div className="flex justify-content-center mt-4">
+                <Chart
+                    id="FavPorPopulacao"
+                    type="polarArea"
+                    width="35rem"
+                    height="35rem"
+                    data={chartFavPop}
+                    opitions={newChartOptions(
+                        'Quantidade de favelas em cada faixa de domicílios'
+                    )}
+                />
+            </div>
         </div>
     );
 
