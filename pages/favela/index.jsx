@@ -1,6 +1,8 @@
 // React & Next
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 // Primereact
+import { Tree } from 'primereact/tree';
 import { Chart } from 'primereact/chart';
 import { Panel } from 'primereact/panel';
 import { Button } from 'primereact/button';
@@ -24,6 +26,7 @@ import {
 
 export default function Favelas({ loading, favelas }) {
     const favelaService = new FavelaService();
+    const router = useRouter();
     const [selectedFavela, setSelectedFavela] = useState('');
     const [activeTab, setActiveTab] = useState(0);
     const [loadingPage, setLoadingPage] = useState(false);
@@ -33,8 +36,11 @@ export default function Favelas({ loading, favelas }) {
     const [chartFavUrb, setChartFavUrb] = useState(C.INITCHAT);
     const [chartFavPop, setChartFavPop] = useState(C.INITCHAT);
 
+    const [nodes, setNodes] = useState([]);
+
     const handleSearch = (e) => {
         e.preventDefault();
+        router.push(`/favela/${selectedFavela.Cod_Fav}`);
     };
 
     useEffect(() => {
@@ -43,13 +49,19 @@ export default function Favelas({ loading, favelas }) {
                 loading(true);
                 setLoadingPage(true);
 
-                const [qtdFavelasPorBairro, qtdFavelasPorAP, qtdFavelasPorUrb, qtdFavelasPorPop] =
-                    await Promise.all([
-                        getFavelasPorBairro(),
-                        getQtdFavAP(),
-                        getQtdFavUrb(),
-                        getQtdFavPop(),
-                    ]);
+                const [
+                    qtdFavelasPorBairro,
+                    qtdFavelasPorAP,
+                    qtdFavelasPorUrb,
+                    qtdFavelasPorPop,
+                    favsComp,
+                ] = await Promise.all([
+                    getFavelasPorBairro(),
+                    getQtdFavAP(),
+                    getQtdFavUrb(),
+                    getQtdFavPop(),
+                    getFavComp(),
+                ]);
 
                 const _chartFavBairro =
                     createChartFavBairro(qtdFavelasPorBairro);
@@ -64,6 +76,8 @@ export default function Favelas({ loading, favelas }) {
                 const _chartFavPop = createChartFavPop(qtdFavelasPorPop);
                 setChartFavPop(_chartFavPop);
 
+                const _treeNode = createTreeFavComplexo(favsComp);
+                setNodes(_treeNode);
             } catch (error) {
             } finally {
                 loading(false);
@@ -88,7 +102,11 @@ export default function Favelas({ loading, favelas }) {
 
     const getQtdFavPop = async () => {
         return favelaService.getQtdFavelasPorPopulacao();
-    }
+    };
+
+    const getFavComp = async () => {
+        return favelaService.getFavComplexo();
+    };
 
     const createChartFavBairro = (qtdFavelasPorBairro) => {
         const [labels, data] = separateData(qtdFavelasPorBairro, [
@@ -132,6 +150,7 @@ export default function Favelas({ loading, favelas }) {
         ]);
         return newChartData(labels, [dataset]);
     };
+
     const createChartFavPop = (qtdFavelasPorPop) => {
         const [labels, data] = separateData(qtdFavelasPorPop, [
             'Qtd_de_domicilios',
@@ -146,6 +165,59 @@ export default function Favelas({ loading, favelas }) {
         ]);
         return newChartData(labels, [dataset]);
     };
+
+    const createTreeFavComplexo = (favsComp) => {
+        const complexos = [
+            ...new Set(
+                favsComp.map((reg) => {
+                    return reg.Nome_Comp;
+                })
+            ),
+        ];
+
+        const tree = complexos.map((complexo, index) => {
+            const children = favsComp
+                .filter((reg) => reg.Nome_Comp == complexo)
+                .map((reg, ind) => {
+                    return {
+                        key: `${index}-${ind}`,
+                        label: reg.Nome_Fav,
+                        data: reg.Nome_Fav,
+                        icon: 'pi pi-map-marker',
+                        draggable: true,
+                    };
+                });
+            return {
+                key: index.toString(),
+                label: complexo ? complexo : 'Favelas Isoladas',
+                data: complexo,
+                icon: 'pi pi-sitemap',
+                children,
+            };
+        });
+
+        const fav = tree.find((reg) => reg.data == null);
+        const indexFav = tree.findIndex((reg) => reg.data == null);
+        tree.splice(indexFav, 1);
+        tree.unshift(fav);
+        return tree;
+    };
+
+    const nodeTemplate = (node, options) => {
+        let label = node.label;
+
+        if (node.children) label = <b>{node.label}</b>;
+
+        if (node.data == null)
+            return (
+                <span className={`${options.className} p-highlight`}>
+                    {label}
+                </span>
+            );
+
+        return <span className={options.className}>{label}</span>;
+    };
+
     const tabPanoramaGeral = (
         <div className="flex flex-column justify-content-center alingn-items-center">
             <Chart
@@ -171,6 +243,7 @@ export default function Favelas({ loading, favelas }) {
             </div>
         </div>
     );
+
     const tabGrauUrbanizacao = (
         <div className="flex justify-content-center">
             <Chart
@@ -185,6 +258,7 @@ export default function Favelas({ loading, favelas }) {
             />
         </div>
     );
+
     const tabPopulacao = (
         <div className="flex justify-content-center">
             <Chart
@@ -200,6 +274,19 @@ export default function Favelas({ loading, favelas }) {
         </div>
     );
 
+    const tabComplexo = (
+        <div>
+            <h2 className="text-center">
+                Complexos e suas respectivas favelas
+            </h2>
+            <Tree
+                value={nodes}
+                filter
+                filterMode="lenient"
+                nodeTemplate={nodeTemplate}
+            />
+        </div>
+    );
     return (
         <>
             <div className="flex flex-column gap-4 p-3">
@@ -256,9 +343,8 @@ export default function Favelas({ loading, favelas }) {
                         <TabPanel header="Grau de Urbanização">
                             {tabGrauUrbanizacao}
                         </TabPanel>
-                        <TabPanel header="População">
-                            {tabPopulacao}    
-                        </TabPanel>
+                        <TabPanel header="População">{tabPopulacao}</TabPanel>
+                        <TabPanel header="Complexo">{tabComplexo}</TabPanel>
                     </TabView>
                 )}
             </div>
