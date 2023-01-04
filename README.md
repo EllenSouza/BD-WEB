@@ -1,34 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Favelas e Bairros
 
-## Getting Started
+<h4>Este repositório é destinado ao desenvolvimento de uma aplicação WEB para exibição dos resultados de consultas sobre favelas e bairros do Rio de Janeiro. Os dados foram obtidos através do CECAD e DATARIO. </h4>
 
-First, run the development server:
+<br/>
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Tecnologias utilizadas
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- <a href="https://pt-br.reactjs.org/docs/getting-started.html" > React </a>
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
+- <a  href="https://www.primefaces.org/primereact/"> PrimeReact </a>
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- <a href="https://nextjs.org/"> Next </a> 
 
-## Deploy on Vercel
+- <a href="https://vercel.com/"> Vercel </a>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- <a href="https://www.db4free.net/index.php?language=pt"> db4free </a>
+- <a href="https://www.mysql.com/"> MySQL </a>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<br/>
+
+## Versão final da aplicação
+
+<a href="https://bd-web.vercel.app/" >link</a>
+
+<br/>
+
+## Documentação
+
+<a href=""> Relatório</a>
+
+ 
+<a href="https://www.canva.com/design/DAFVTEHu8KA/THqMc4_ai4CI8av1KGW1mQ/view?utm_content=DAFVTEHu8KA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton#12"> Apresentação em slides </a>
+
+<br/>
+
+## Equipe de Desenvolvimento da Aplicação
+
+| <a href="https://github.com/EllenSouza"><img src="https://github.com/EllenSouza.png" height="80px" width="80px" alt="ellen-avatar" /><br><sub>Ellen Almeida</b></sub></a><br/> | <a href="https://github.com/keviinsna"><img src="https://github.com/keviinsna.png" height="80px" width="80px" alt="kevin-avatar" /><br><sub>Kevin Sena</b></sub></a><br/>| 
+|:---: | :---: | 
