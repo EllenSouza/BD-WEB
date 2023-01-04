@@ -189,7 +189,7 @@ export default function Favelas({ loading, favelas }) {
                 });
             return {
                 key: index.toString(),
-                label: complexo ? complexo : 'Favelas Isoladas',
+                label: complexo ? `${complexo} (${children.length})` : `Favelas Isoladas (${children.length})`,
                 data: complexo,
                 icon: 'pi pi-sitemap',
                 children,
