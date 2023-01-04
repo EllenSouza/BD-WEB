@@ -34,6 +34,8 @@ export default function Layout({ children }) {
             icon="pi pi-users"
             label="Envolvidos"
             className="p-button-outlined p-button-sm"
+            onClick={() => router.push(`/envolvidos`)}
+
         />
     );
 
