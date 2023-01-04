@@ -59,7 +59,6 @@ export default function Bairro({ loading, query }) {
                 const chartFaixaRenda =
                     createChartFaixaRenda(faixaRendaPorBairro);
                 setChartFaixaRenda(chartFaixaRenda);
-                console.log(favelasBairro);
                 setFavelasBairro(favelasBairro);
             } catch (error) {
             } finally {

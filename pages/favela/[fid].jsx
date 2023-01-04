@@ -31,7 +31,6 @@ export default function Favela({ loading, query }) {
                 loading(true);
                 setLoadingPage(true);
                 const getFavelaInfo = await getFavela();
-                console.log(getFavelaInfo);
                 setFavelaInfo(getFavelaInfo);
             } catch (error) {
             } finally {
@@ -40,7 +39,6 @@ export default function Favela({ loading, query }) {
             }
         };
         initScreen();
-        console.log(favelaInfo);
     }, []);
     const template = () => {
         return (
