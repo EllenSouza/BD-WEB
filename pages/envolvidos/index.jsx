@@ -1,5 +1,6 @@
 import { Card } from 'primereact/card';
-
+import Image from 'next/image';
+import Link from 'next/link';
 export default function envolvidos() {
     return (
         <>
@@ -8,28 +9,35 @@ export default function envolvidos() {
                 className="flex justify-content-center"
             >
                 <div className="flex justify-content-around">
-                    <a
-                        target="_blank"
-                        href="https://github.com/EllenSouza"
-                        className="flex flex-column align-items-center"
-                    >
-                        <img
-                            src="https://github.com/EllenSouza.png"
-                            height="80px"
-                            width="80px"
-                            alt="ellen-avatar"
-                        />
-                        <p>Ellen Almeida</p>
-                    </a>
-                    <a target="_blank" href="https://github.com/keviinsna">
-                        <img
-                            src="https://github.com/keviinsna.png"
-                            height="80px"
-                            width="80px"
-                            alt="kevin-avatar"
-                        />
-                        <p>Kevin Sena</p>
-                    </a>
+                    <Link href="https://github.com/EllenSouza" legacyBehavior>
+                        <a
+                            target="_blank"
+                            className="flex flex-column align-items-center"
+                        >
+                            <Image
+                                src="/ellen.jpg"
+                                height={110}
+                                width={110}
+                                quality={100}
+                                priority
+                                alt="ellen-avatar"
+                            />
+                            <p>Ellen Almeida</p>
+                        </a>
+                    </Link>
+                    <Link href="https://github.com/keviinsna" legacyBehavior>
+                        <a target="_blank">
+                            <Image
+                                src="/kevin.jpg"
+                                height={110}
+                                width={110}
+                                quality={100}
+                                priority
+                                alt="kevin-avatar"
+                            />
+                            <p>Kevin Sena</p>
+                        </a>
+                    </Link>
                 </div>
             </Card>
 
@@ -38,71 +46,89 @@ export default function envolvidos() {
                     Equipe de Banco de Dados e Documentação
                 </h2>
                 <div className="flex justify-content-around gap-4">
-                    <a
-                        target="_blank"
-                        href="https://github.com/EllenSouza"
-                        className="flex flex-column align-items-center"
-                    >
-                        <img
-                            src="https://github.com/EllenSouza.png"
-                            height="80px"
-                            width="80px"
-                            alt="ellen-avatar"
-                        />
-                        <p>Ellen Almeida</p>
-                    </a>
-                    <a
-                        target="_blank"
-                        href="https://github.com/GabrielTC9"
-                        className="flex flex-column align-items-center"
-                    >
-                        <img
-                            src="https://github.com/GabrielTC9.png"
-                            height="80px"
-                            width="80px"
-                            alt="gabriel-avatar"
-                        />
-                        <p>Gabriel Trindade</p>
-                    </a>
-                    <a
-                        target="_blank"
-                        href="https://github.com/Jeffiemax"
-                        className="flex flex-column align-items-center"
-                    >
-                        <img
-                            src="https://github.com/Jeffiemax.png"
-                            height="80px"
-                            width="80px"
-                            alt="jefferson-avatar"
-                        />
-                        <p>Jefferson Maxwell</p>
-                    </a>
-                    <a
-                        target="_blank"
-                        href="https://github.com/keviinsna"
-                        className="flex flex-column align-items-center"
-                    >
-                        <img
-                            src="https://github.com/keviinsna.png"
-                            height="80px"
-                            width="80px"
-                            alt="kevin-avatar"
-                        />
-                        <p>Kevin Sena</p>
-                    </a>
-                    <a
-                        target="_blank"
+                    <Link href="https://github.com/EllenSouza" legacyBehavior>
+                        <a
+                            target="_blank"
+                            className="flex flex-column align-items-center"
+                        >
+                            <Image
+                                src="/ellen.jpg"
+                                height={110}
+                                width={110}
+                                quality={100}
+                                priority
+                                alt="ellen-avatar"
+                            />
+                            <p>Ellen Almeida</p>
+                        </a>
+                    </Link>
+                    <Link href="https://github.com/GabrielTC9" legacyBehavior>
+                        <a
+                            target="_blank"
+                            className="flex flex-column align-items-center"
+                        >
+                            <Image
+                                src="/gabriel.jpg"
+                                height={110}
+                                width={110}
+                                quality={100}
+                                priority
+                                alt="gabriel-avatar"
+                            />
+                            <p>Gabriel Trindade</p>
+                        </a>
+                    </Link>
+                    <Link href="https://github.com/Jeffiemax" legacyBehavior>
+                        <a
+                            target="_blank"
+                            className="flex flex-column align-items-center"
+                        >
+                            <Image
+                                src="/jefferson.png"
+                                height={110}
+                                width={110}
+                                quality={100}
+                                priority
+                                alt="jefferson-avatar"
+                            />
+                            <p>Jefferson Maxwell</p>
+                        </a>
+                    </Link>
+                    <Link href="https://github.com/keviinsna" legacyBehavior>
+                        <a
+                            target="_blank"
+                            className="flex flex-column align-items-center"
+                        >
+                            <Image
+                                src="/kevin.jpg"
+                                height={110}
+                                width={110}
+                                quality={100}
+                                priority
+                                alt="kevin-avatar"
+                            />
+                            <p>Kevin Sena</p>
+                        </a>
+                    </Link>
+                    <Link
                         href="https://github.com/riquelmegomes"
-                        className="flex flex-column align-items-center"
+                        legacyBehavior
                     >
-                        <img
-                            src="https://github.com/riquelmegomes.png"
-                            height="80px"
-                            width="80px"
-                            alt="riquelme-avatar"
-                        />
-                        <p>Riquelme Gomes</p>
-                    </a>
+                        <a
+                            target="_blank"
+                            className="flex flex-column align-items-center"
+                        >
+                            <Image
+                                src="/riquelme.jpg"
+                                height={110}
+                                width={110}
+                                quality={100}
+                                priority
+                                alt="riquelme-avatar"
+                            />
+                            <p>Riquelme Gomes</p>
+                        </a>
+                    </Link>
                 </div>
             </Card>
         </>
