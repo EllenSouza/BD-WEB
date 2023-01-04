@@ -2,7 +2,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 // Primereact
-import { Card } from 'primereact/card';
 import { Chart } from 'primereact/chart';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
