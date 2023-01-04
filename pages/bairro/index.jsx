@@ -177,7 +177,7 @@ export default function PesquisaBairro({ loading, bairros }) {
                 });
             return {
                 key: index.toString(),
-                label: bairro,
+                label: `${bairro} (${children.length})`,
                 data: bairro,
                 icon: 'pi pi-sitemap',
                 children,
@@ -438,7 +438,7 @@ export default function PesquisaBairro({ loading, bairros }) {
                         <TabPanel header="Atividades Econômicas">
                             {tabAtivEco}
                         </TabPanel>
-                        <TabPanel header="Favelas">{tabFavela}</TabPanel>
+                        <TabPanel header="Favelas em Bairros">{tabFavela}</TabPanel>
                     </TabView>
                 )}
             </div>
