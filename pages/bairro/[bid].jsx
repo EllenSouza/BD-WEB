@@ -2,7 +2,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 // Primereact
-import { Card } from 'primereact/card';
 import { Chart } from 'primereact/chart';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -60,7 +59,6 @@ export default function Bairro({ loading, query }) {
                 const chartFaixaRenda =
                     createChartFaixaRenda(faixaRendaPorBairro);
                 setChartFaixaRenda(chartFaixaRenda);
-                console.log(favelasBairro);
                 setFavelasBairro(favelasBairro);
             } catch (error) {
             } finally {

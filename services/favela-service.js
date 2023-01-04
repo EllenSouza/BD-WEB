@@ -15,7 +15,7 @@ export class FavelaService {
      */
     async getFavela(codFavela) {
         const res = await (
-            await fetch(`${BASE_URL} + /favela/${codFavela}`)
+            await fetch(BASE_URL + `/favela/${codFavela}`)
         ).json();
         return res.data;
     }

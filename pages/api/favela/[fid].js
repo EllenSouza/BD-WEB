@@ -7,10 +7,12 @@ export default async function favelas(req, res) {
     try {
         const { fid } = req.query;
 
-        const favelas = await executeQuery(
+        const [favelas] = await executeQuery(
             `
-            SELECT *
+            SELECT Nome_Fav,Nome_UPP, Qtd_de_familias, Grau_de_urbanizacao, Nome_Bairro, Nome_Comp
             FROM Favela
+            NATURAL JOIN Bairro
+            NATURAL LEFT JOIN Complexo
             WHERE Cod_Fav=?
         `,
             [fid]
