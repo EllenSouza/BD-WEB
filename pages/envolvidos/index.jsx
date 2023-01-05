@@ -84,7 +84,7 @@ export default function envolvidos() {
                             className="flex flex-column align-items-center"
                         >
                             <Image
-                                src="/jefferson.png"
+                                src="/jefferson.jpg"
                                 height={110}
                                 width={110}
                                 quality={100}
