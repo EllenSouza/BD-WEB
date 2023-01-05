@@ -32,7 +32,7 @@
 
 ## Documentação
 
-<a href=""> Relatório</a>
+<a href="https://github.com/EllenSouza/BD-WEB/blob/ConsultaFavela/public/Relat%C3%B3rio%20Final%20BD.pdf"> Relatório</a>
 
  
 <a href="https://www.canva.com/design/DAFVTEHu8KA/THqMc4_ai4CI8av1KGW1mQ/view?utm_content=DAFVTEHu8KA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton#12"> Apresentação em slides </a>
